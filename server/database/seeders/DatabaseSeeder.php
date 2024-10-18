@@ -2,22 +2,38 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * Start a database transaction before seeding data.
+     */
+    public function __construct()
+    {
+        DB::beginTransaction();
+    }
+
+    /**
+     * Commit the database transaction after seeding data.
+     */
+    public function __destruct()
+    {
+        DB::commit();
+    }
+
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            RoleSeeder::class,
+            BankEmployeeSeeder::class,
+            ClientSeeder::class,
+            ClientEmployeeSeeder::class,
+            CalendarActionTagSeeder::class,
         ]);
     }
 }
