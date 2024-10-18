@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -57,5 +57,27 @@ class CalendarEvent extends Model
     public function calendarAction(): BelongsTo
     {
         return $this->belongsTo(CalendarAction::class);
+    }
+
+    /**
+     * @brief The client employees that are responsible for this event.
+     *
+     * @return BelongsToMany
+     */
+    public function clientEmployees(): BelongsToMany
+    {
+        return $this->belongsToMany(ClientEmployee::class)
+            ->withPivot('accepted');
+    }
+
+    /**
+     * @brief The bank employees that are responsible for this event.
+     *
+     * @return BelongsToMany
+     */
+    public function bankEmployees(): BelongsToMany
+    {
+        return $this->belongsToMany(BankEmployee::class)
+            ->withPivot('accepted');
     }
 }

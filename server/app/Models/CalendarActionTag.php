@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
@@ -52,5 +51,15 @@ class CalendarActionTag extends Model
     public function calendarActions(): BelongsToMany
     {
         return $this->belongsToMany(CalendarAction::class);
+    }
+
+    /**
+     * Get the calendar action templates that have the tag.
+     *
+     * @return HasMany
+     */
+    public function CalendarActionTemplates(): BelongsToMany
+    {
+        return $this->belongsToMany(CalendarActionTemplate::class);
     }
 }

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('calendar_action_templates', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
+            $table->string('title');
+            $table->string('description');
             $table->timestamps();
         });
     }

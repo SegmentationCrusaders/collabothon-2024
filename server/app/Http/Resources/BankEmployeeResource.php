@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CalendarActionStatusResource extends JsonResource
+class BankEmployeeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,9 +16,11 @@ class CalendarActionStatusResource extends JsonResource
     {
         return [
             'uuid' => $this->uuid,
-            'name' => $this->name,
-            'created_at' => (string) $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => (string) $this->updated_at->format('Y-m-d H:i:s'),
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'accepted' => $this->pivot->accepted,
         ];
     }
 }

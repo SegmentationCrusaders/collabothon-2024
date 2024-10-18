@@ -20,6 +20,7 @@ class ClientEmployeeSeeder extends Seeder
     public function run(): void
     {
         $generalAdvisor = BankEmployee::factory()->create();
+        $specialists = BankEmployee::factory(rand(2, 3))->create();
 
         $client = Client::factory()
             ->for($generalAdvisor)
@@ -28,21 +29,37 @@ class ClientEmployeeSeeder extends Seeder
         $roles = Role::all();
         $tags = CalendarActionTag::all();
 
-        $roles->each(function (Role $role) use ($client, $tags) {
+        $roles->each(function (Role $role) use ($client, $tags, $specialists) {
             $clientEmployees = ClientEmployee::factory(2)
                 ->for($client)
                 ->for($role)
-                ->has(
-                    CalendarAction::factory()
-                        ->hasAttached($tags->random())
-                        ->has(CalendarEvent::factory()->count(4))
-                        ->has(
-                            CalendarActionStatus::factory()
-                                ->count(4)
-                        )
-                        ->count(5)
-                )
                 ->create();
+
+            $clientEmployees->each(function (ClientEmployee $clientEmployee) use ($tags, $specialists) {
+                $calendarActions = CalendarAction::factory(5)
+                    ->for($clientEmployee)
+                    ->hasAttached($tags->random())
+                    ->create();
+
+                $calendarActions->each(function (CalendarAction $calendarAction) use ($clientEmployee, $specialists) {
+                    $calendarEvents = CalendarEvent::factory(4)
+                        ->for($calendarAction)
+                        ->hasAttached($specialists, ['accepted' => true])
+                        ->create();
+
+                    $calendarEvents->each(function (CalendarEvent $calendarEvent) use ($clientEmployee) {
+                        $calendarEvent->clientEmployees()->attach($clientEmployee);
+                    });
+
+                    $calendarAction->calendarEvents()->saveMany($calendarEvents);
+
+                    $calendarActionStatuses = CalendarActionStatus::factory(4)
+                        ->for($calendarAction)
+                        ->create();
+
+                    $calendarAction->calendarActionStatuses()->saveMany($calendarActionStatuses);
+                });
+            });
         });
     }
 }

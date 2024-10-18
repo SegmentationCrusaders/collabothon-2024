@@ -31,9 +31,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             CalendarActionTagSeeder::class,
-            // BankEmployeeSeeder::class,
-            // ClientSeeder::class,
             ClientEmployeeSeeder::class,
+            CalendarActionTemplateSeeder::class,
         ]);
     }
 }

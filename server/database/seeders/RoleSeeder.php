@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\Enums\RoleEnum;
 use App\Models\Role;
 use Illuminate\Database\Seeder;
 
@@ -13,19 +14,19 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         Role::firstOrCreate([
-            'name' => 'CEO'
+            'name' => RoleEnum::CEO->value
         ]);
 
         Role::firstOrCreate([
-            'name' => 'Controller'
+            'name' => RoleEnum::CONTROLLER->value
         ]);
 
         Role::firstOrCreate([
-            'name' => 'Cash management specialist'
+            'name' => RoleEnum::CASH_MANAGEMENT_SPECIALIST->value
         ]);
 
         Role::firstOrCreate([
-            'name' => 'Accountant'
+            'name' => RoleEnum::ACCOUNTANT->value
         ]);
     }
 }

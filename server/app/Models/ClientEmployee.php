@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
@@ -78,5 +77,16 @@ class ClientEmployee extends Model
     public function calendarActions(): HasMany
     {
         return $this->hasMany(CalendarAction::class);
+    }
+
+    /**
+     * Get the calendar events that were issued by the employee.
+     *
+     * @return HasMany
+     */
+    public function calendarEvents(): HasMany
+    {
+        return $this->hasMany(CalendarEvent::class)
+            ->withPivot('accepted');
     }
 }
