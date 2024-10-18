@@ -13,19 +13,19 @@ class CalendarActionTagSeeder extends Seeder
      */
     public function run(): void
     {
-        CalendarActionTag::create([
+        CalendarActionTag::firstOrCreate([
             'tag' => 'Cash Flow',
         ]);
 
-        CalendarActionTag::create([
+        CalendarActionTag::firstOrCreate([
             'tag' => 'Payment',
         ]);
 
-        CalendarActionTag::create([
+        CalendarActionTag::firstOrCreate([
             'tag' => 'Technical',
         ]);
 
-        CalendarActionTag::create([
+        CalendarActionTag::firstOrCreate([
             'tag' => 'Other',
         ]);
     }

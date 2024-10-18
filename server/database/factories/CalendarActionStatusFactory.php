@@ -20,7 +20,7 @@ class CalendarActionStatusFactory extends Factory
         $cases = CalendarActionStatusEnum::cases();
 
         return [
-            'status' => $cases[array_rand($cases)]->value,
+            'name' => $cases[array_rand($cases)]->value,
         ];
     }
 }

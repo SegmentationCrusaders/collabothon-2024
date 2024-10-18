@@ -19,8 +19,8 @@ return new class extends Migration
             $table->foreignId('calendar_action_id')->references('id')->on('calendar_actions')->cascadeOnDelete();
             $table->timestampTz('start_date');
             $table->timestampTz('end_date');
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

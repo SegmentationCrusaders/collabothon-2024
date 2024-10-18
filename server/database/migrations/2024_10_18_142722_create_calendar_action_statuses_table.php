@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('calendar_action_statuses', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->smallInteger('status');
+            $table->string('name');
             $table->foreignId('calendar_action_id')->references('id')->on('calendar_actions')->cascadeOnDelete();
             $table->timestamps();
         });

@@ -27,6 +27,7 @@ class CalendarEventFactory extends Factory
             'location' => $location,
             'start_date' => $startDate,
             'end_date' => $endDate,
+            'deleted_at' => fake()->boolean() ? Carbon::now() : null,
         ];
     }
 }

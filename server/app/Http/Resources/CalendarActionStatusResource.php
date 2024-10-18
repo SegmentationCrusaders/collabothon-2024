@@ -17,8 +17,7 @@ class CalendarActionStatusResource extends JsonResource
     {
         return [
             'uuid' => $this->uuid,
-            'name' => CalendarActionStatusEnum::from($this->status)->name,
-            'status' => $this->status,
+            'name' => $this->status,
             'created_at' => (string) $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => (string) $this->updated_at->format('Y-m-d H:i:s'),
         ];

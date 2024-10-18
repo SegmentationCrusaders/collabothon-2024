@@ -30,10 +30,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleSeeder::class,
-            BankEmployeeSeeder::class,
-            ClientSeeder::class,
-            ClientEmployeeSeeder::class,
             CalendarActionTagSeeder::class,
+            // BankEmployeeSeeder::class,
+            // ClientSeeder::class,
+            ClientEmployeeSeeder::class,
         ]);
     }
 }

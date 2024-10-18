@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\BankEmployee;
 use App\Models\CalendarAction;
 use App\Models\CalendarActionStatus;
 use App\Models\CalendarActionTag;
@@ -18,16 +19,22 @@ class ClientEmployeeSeeder extends Seeder
      */
     public function run(): void
     {
-        $client = Client::factory()->create();
-        $roles = Role::all();
+        $generalAdvisor = BankEmployee::factory()->create();
 
-        $roles->each(function (Role $role) use ($client) {
-            ClientEmployee::factory(2)
+        $client = Client::factory()
+            ->for($generalAdvisor)
+            ->create();
+
+        $roles = Role::all();
+        $tags = CalendarActionTag::all();
+
+        $roles->each(function (Role $role) use ($client, $tags) {
+            $clientEmployees = ClientEmployee::factory(2)
                 ->for($client)
                 ->for($role)
                 ->has(
                     CalendarAction::factory()
-                        ->has(CalendarActionTag::factory()->count(3))
+                        ->hasAttached($tags->random())
                         ->has(CalendarEvent::factory()->count(4))
                         ->has(
                             CalendarActionStatus::factory()

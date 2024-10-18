@@ -2,13 +2,13 @@
 
 namespace App\Helpers\Enums;
 
-enum CalendarActionStatusEnum: int
+enum CalendarActionStatusEnum: string
 {
-    case CREATED = 1;
+    case CREATED = 'CREATED';
 
-    case AWAITING = 2; // awaiting meeting
+    case AWAITING = 'AWAITING'; // awaiting meeting
 
-    case COMPLETED = 3;
+    case COMPLETED = 'COMPLETED';
 
-    case CANCELLED = 4;
+    case CANCELLED = 'CANCELLED';
 }
