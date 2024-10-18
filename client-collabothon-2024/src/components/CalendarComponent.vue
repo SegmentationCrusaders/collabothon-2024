@@ -1,8 +1,6 @@
 <template>
     <div>
         <FullCalendar :events="events" @event-click="handleEventClick" :options="calendarOptions" />
-
-        
     </div>
 </template>
 
@@ -36,7 +34,6 @@ export default {
                 },
                 editable: true,
                 selectable: true,
-                themeSystem: "litera",
                 initialEvents: this.events,
                 select: this.handleDateSelect,
                 eventClick: this.handleEventClick,
@@ -46,9 +43,6 @@ export default {
     },
 
     methods: {
-        handleWeekendsToggle() {
-            this.calendarOptions.weekends = !this.calendarOptions.weekends;
-        },
         handleDateSelect(selectInfo) {
             let title = prompt("Please enter a new title for your event");
             let calendarApi = selectInfo.view.calendar;
@@ -68,18 +62,12 @@ export default {
 
         handleEventClick(info) {
             const clickedEvent = info.event;
-
-            console.log("CalendarComponent - clickedEvent", clickedEvent.title);
-
-            // Find the corresponding original event using the event ID
-            this.selectedEvent = this.findOriginalEvent(clickedEvent.id);
+            
+            if (clickedEvent.id) {
+                this.$emit("calendar-event-click", clickedEvent.id);
+            }
         },
-        findOriginalEvent(eventId) {
-            // Find the original event based on the ID in todoEvents and proposedEvents
-            const allEvents = [...this.$props.events]; // Use the events prop passed from the parent
 
-            return allEvents.find((event) => event.id === eventId) || null; // Return the event or null
-        },
         handleEvents(events) {
             this.currentEvents = events;
         },
