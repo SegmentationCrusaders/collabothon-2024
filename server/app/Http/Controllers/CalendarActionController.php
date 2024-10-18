@@ -6,6 +6,7 @@ use App\Http\Resources\CalendarActionResource;
 use App\Models\CalendarAction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class CalendarActionController extends Controller
@@ -19,6 +20,8 @@ class CalendarActionController extends Controller
                 'calendarActionStatus'
             ])
             ->paginate(5);
+
+        // dd(Auth::user());
 
         return CalendarActionResource::collection($calendarActions);
     }

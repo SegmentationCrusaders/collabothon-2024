@@ -18,13 +18,13 @@ class ClientEmployeeSeeder extends Seeder
      */
     public function run(): void
     {
-        $clients = Client::all();
+        $client = Client::factory()->create();
         $roles = Role::all();
 
-        $clients->each(function ($client) use ($roles) {
+        $roles->each(function (Role $role) use ($client) {
             ClientEmployee::factory(2)
                 ->for($client)
-                ->for($roles->random())
+                ->for($role)
                 ->has(
                     CalendarAction::factory()
                         ->has(CalendarActionTag::factory()->count(3))

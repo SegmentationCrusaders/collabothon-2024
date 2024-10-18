@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\ClientEmployee;
+
 return [
 
     /*
@@ -40,6 +42,12 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'apiKey' => [
+            'driver' => 'apiKey',
+            'provider' => 'apiKeys',
+            'hash' => false,
+        ],
     ],
 
     /*
@@ -63,6 +71,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
+
+        'apiKeys' => [
+            'driver' => 'database',
+            'model' => ClientEmployee::class,
         ],
 
         // 'users' => [
