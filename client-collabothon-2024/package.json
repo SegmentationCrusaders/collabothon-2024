@@ -14,9 +14,10 @@
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "@fullcalendar/vue3": "^6.1.15",
+    "axios": "^1.7.7",
     "vue": "^3.5.10",
     "vue-multiselect": "^3.1.0",
-    "axios": "^1.7.7"
+    "vue-router": "^4.4.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.4",

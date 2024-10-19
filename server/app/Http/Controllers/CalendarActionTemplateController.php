@@ -18,7 +18,7 @@ class CalendarActionTemplateController extends Controller
                 'calendarActionTags',
             ])
             ->whereHasPermission(Auth::user(), CalendarActionTemplate::class)
-            ->paginate(5);
+            ->paginate();
 
         return CalendarActionTemplateResource::collection($calendarActionTemplates);
     }

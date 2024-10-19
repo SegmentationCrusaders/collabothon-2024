@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Enums\CalendarActionStatusEnum;
 use App\Http\Resources\CalendarActionResource;
+use App\Models\BankEmployee;
 use App\Models\CalendarAction;
 use App\Models\CalendarActionStatus;
 use App\Models\CalendarActionTag;
+use App\Models\CalendarEvent;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
@@ -75,6 +78,28 @@ class CalendarActionController extends Controller
 
             $calendarAction->calendarActionTags()->sync($tags);
         }
+
+        $startDate = Carbon::now()->addDays(rand(1, 7));
+        $endDate = $startDate->copy()->addMinutes(rand(30, 180));
+
+        $calendarEvent = CalendarEvent::create([
+            'title' => $calendarAction->title,
+            'description' => $calendarAction->description,
+            'location' => fake()->boolean() ? fake()->address() : "ONLINE",
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'calendar_action_id' => $calendarAction->id,
+        ]);
+
+        $calendarEvent->clientEmployees()->attach(Auth::user()->id, ['accepted' => null]);
+
+        $specialists = BankEmployee::all()->random(2);
+        $calendarEvent->bankEmployees()->attach($specialists->pluck('id'), ['accepted' => true]);
+
+        CalendarActionStatus::create([
+            'name' => CalendarActionStatusEnum::AWAITING->value,
+            'calendar_action_id' => $calendarAction->id,
+        ]);
 
         DB::commit();
 

@@ -20,25 +20,50 @@
                     :key="tag"
                     class="px-2 py-1 text-green-800 bg-green-100 rounded-full"
                 >
-                    {{ tag }}
+                    {{ tag.tag }}
                 </span>
 
+                <CalendarActionStatus :action="action" />
+                
                 <p class="my-2 text-gray-600">Description: {{ action?.description }}</p>
 
-                <!-- Custom sections as per your design -->
-                <div class="mb-4">
-                    <p class="mb-2 text-gray-600">Client Employees:</p>
-                    <p class="p-2 border border-gray-300">{{ action?.clientEmployees }}</p>
-                </div>
+                <div v-if="selectedEvent">
+                    <div class="mb-4">
+                        <p class="mb-2 text-gray-600">Client Employees:</p>
+                        <div class="p-2">
+                            <div v-for="(employee, index) in selectedEvent.client_employees" :key="index" class="card mb-2 p-2 border border-gray-300 rounded">
+                                <div class="font-bold">{{ employee.first_name }} {{ employee.last_name }}</div>
+                                <div>{{ employee.email }}</div>
+                                <div>{{ employee.phone }}</div>
+                                <div>
+                                    Status: 
+                                    <span v-if="employee.accepted === 1">✔ Accepted</span>
+                                    <span v-else-if="employee.accepted === 0">✖ Not Accepted</span>
+                                    <span v-else>? No Decision Yet</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="mb-4">
-                    <p class="mb-2 text-gray-600">Bank Employees:</p>
-                    <p class="p-2 border border-gray-300">{{ action?.bankEmployees }}</p>
+                    <div class="mb-4">
+                        <p class="mb-2 text-gray-600">Bank Employees:</p>
+                        <div class="p-2">
+                            <div v-for="(employee, index) in selectedEvent.bank_employees" :key="index" class="card mb-2 p-2 border border-gray-300 rounded">
+                                <div class="font-bold">{{ employee.first_name }} {{ employee.last_name }}</div>
+                                <div>{{ employee.email }}</div>
+                                <div>{{ employee.phone }}</div>
+                                <div>
+                                    Status: 
+                                    <span v-if="employee.accepted === 1">✔ Accepted</span>
+                                    <span v-else-if="employee.accepted === 0">✖ Not Accepted</span>
+                                    <span v-else>? No Decision Yet</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="mb-4">
-                    <p class="mb-2 text-gray-600">Additional Resources:</p>
-                    <p class="p-2 border border-gray-300">{{ action?.additionalResources }}</p>
+                <div v-else>
+                    <p class="text-gray-600">Select a date to schedule a meeting</p>
                 </div>
             </div>
 
@@ -51,7 +76,7 @@
                         :key="event.id"
                         class="flex items-center justify-between p-2 rounded"
                     >
-                        <CalendarEvent :event="event" />
+                        <CalendarEvent @eventClicked="eventClicked" :event="event" />
 
                         <div class="flex space-x-2 text-4xl" v-if="isApprovedByCurrentUser(event)">
                             Approved <i class="fa-solid fa-circle-check"></i>
@@ -102,6 +127,7 @@
 </template>
 
 <script>
+import CalendarActionStatus from "../CalendarActionStatus.vue";
 import CalendarEvent from "../CalendarEventComponent.vue";
 import {all} from "axios";
 
@@ -140,6 +166,12 @@ export default {
     },
     components: {
         CalendarEvent,
+        CalendarActionStatus,
+    },
+    data() {
+        return {
+            selectedEvent: null,
+        };
     },
     methods: {
         acceptEvent(event) {
@@ -190,6 +222,9 @@ export default {
             if (event.target === this.$el) {
                 this.closePopover();
             }
+        },
+        eventClicked(event) {
+            this.selectedEvent = event;
         },
         isApprovedByCurrentUser,
         isDeclinedByCurrentUser,

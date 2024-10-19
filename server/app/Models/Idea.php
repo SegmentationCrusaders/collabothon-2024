@@ -2,18 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
-class Role extends Model
+class Idea extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name',
+        'content',
+        'calendar_action_template_id',
     ];
 
     /**
@@ -35,28 +39,18 @@ class Role extends Model
     {
         parent::boot();
 
-        static::creating(function (Role $role) {
-            $role->uuid = Str::uuid()->toString();
+        static::creating(function (Idea $idea) {
+            $idea->uuid = Str::uuid()->toString();
         });
     }
 
     /**
-     * Get the client employees having this role.
+     * Get the action template that is assigned to this idea.
      *
-     * @return HasMany
+     * @return BelongsTo
      */
-    public function clientEmployees(): HasMany
+    public function calendarActionTemplate(): BelongsTo
     {
-        return $this->hasMany(ClientEmployee::class);
-    }
-
-    /**
-     * Get the bank employees having this role.
-     *
-     * @return HasMany
-     */
-    public function bankEmployees(): HasMany
-    {
-        return $this->hasMany(BankEmployee::class);
+        return $this->belongsTo(CalendarActionTemplate::class);
     }
 }

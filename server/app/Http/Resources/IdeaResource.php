@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BankEmployeeResource extends JsonResource
+class IdeaResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,12 +15,8 @@ class BankEmployeeResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'uuid' => $this->uuid,
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'role' => new RoleResource(resource: $this->role),
+            'content' => $this->content,
+            'calendar_action_template' => new CalendarActionTemplateResource($this->calendarActionTemplate),
         ];
     }
 }

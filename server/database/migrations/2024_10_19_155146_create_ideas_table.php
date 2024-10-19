@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bank_employees', function (Blueprint $table) {
+        Schema::create('ideas', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('email');
-            $table->string('phone');
-            $table->foreignId('role_id')->references('id')->on('roles')->cascadeOnDelete();
+            $table->text('content');
+            $table->foreignId('calendar_action_template_id')->references('id')->on('calendar_action_templates')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bank_employees');
+        Schema::dropIfExists('ideas');
     }
 };

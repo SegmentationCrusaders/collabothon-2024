@@ -6,6 +6,7 @@ use App\Http\Controllers\CalendarActionController;
 use App\Http\Controllers\CalendarEventActionController;
 use App\Http\Controllers\CalendarActionTagController;
 use App\Http\Controllers\CalendarActionTemplateController;
+use App\Http\Controllers\IdeaController;
 use App\Http\Resources\BankEmployeeResource;
 use App\Http\Resources\ClientEmployeeResource;
 use App\Models\ClientEmployee;
@@ -24,6 +25,8 @@ Route::get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:apiKey'])->group(function () {
+
+    Route::get('/ideas', [IdeaController::class, 'index']);
 
     Route::get('/calendar-actions', [CalendarActionController::class, 'index']);
     Route::post('/calendar-actions', [CalendarActionController::class, 'store']);

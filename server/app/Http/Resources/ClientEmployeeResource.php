@@ -20,7 +20,7 @@ class ClientEmployeeResource extends JsonResource
             'last_name' => $this->last_name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'role' => new RoleResource($this->role),
+            'role' => new RoleResource(resource: $this->role),
         ];
     }
 }

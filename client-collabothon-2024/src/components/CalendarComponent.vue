@@ -1,11 +1,6 @@
 <template>
     <div>
-        <FullCalendar
-            ref="fullCalendar"
-            :events="currentEvents"
-            @event-click="handleEventClick"
-            :options="calendarOptions"
-        />
+        <FullCalendar ref="fullCalendar" :events="currentEvents" :options="calendarOptions" />
     </div>
 </template>
 
@@ -28,6 +23,7 @@ export default {
     data() {
         return {
             selectedEvent: null,
+            selectedRange: null,
             currentEvents: [],
 
             calendarOptions: {
@@ -38,31 +34,47 @@ export default {
                     center: "title",
                     right: "dayGridMonth,timeGridWeek,timeGridDay",
                 },
-                editable: true,
                 selectable: true,
-                select: this.handleDateSelect,
                 eventClick: this.handleEventClick,
+                viewClassNames: this.handleViewChange,
                 timeZone: "local",
             },
         };
     },
 
     methods: {
-        handleDateSelect(selectInfo) {
-            let title = prompt("Please enter a new title for your event");
-            let calendarApi = selectInfo.view.calendar;
+        handleViewChange(vewChangedWrapped) {
+            if (
+                !vewChangedWrapped.view ||
+                !vewChangedWrapped?.view.currentStart ||
+                !vewChangedWrapped?.view.currentEnd
+            )
+                return;
 
-            calendarApi.unselect(); // clear date selection
+            // Get the date range based on the new vewChangedWrapped
+            const start = vewChangedWrapped.view.currentStart;
+            const end = vewChangedWrapped.view.currentEnd;
 
-            if (title) {
-                calendarApi.addEvent({
-                    id: createEventId(),
-                    title,
-                    start: selectInfo.startStr,
-                    end: selectInfo.endStr,
-                    allDay: selectInfo.allDay,
-                });
+            if (!start || !end) return;
+
+            if (
+                this.selectedRange &&
+                this.selectedRange?.start == start &&
+                this.selectedRange?.end == end
+            ) {
+                return; // Do nothing if the range is the same
             }
+
+            const newRange = { start: start, end: end };
+            const currentRangeString = JSON.stringify(this.selectedRange);
+            const newRangeString = JSON.stringify(newRange);
+
+            if (currentRangeString === newRangeString) {
+                return; // Do nothing if the range is the same
+            }
+
+            this.selectedRange = newRange;
+            this.$emit("calendar-view-range-change", this.selectedRange);
         },
 
         convertToLocalDate(dateString) {
@@ -126,5 +138,3 @@ export default {
     },
 };
 </script>
-
-<style scoped></style>
