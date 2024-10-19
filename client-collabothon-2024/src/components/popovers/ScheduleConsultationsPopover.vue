@@ -16,8 +16,8 @@
                 <h2 class="mb-4 text-lg font-semibold text-gray-800">Preview Email</h2>
 
                 <!-- bagde with template -->
-                <div class="flex items center justify-between mb-4">
-                    <div class="flex items-center comarzbank-bg rounded-lg p-2">
+                <div class="flex justify-between mb-4 items center">
+                    <div class="flex items-center p-2 rounded-lg comarzbank-bg">
                         <span class="text-sm font-semibold text-white">Template:</span>
                         <span class="ml-2 text-sm font-semibold text-white">{{ currentTemplate }}</span>
                     </div>
@@ -67,7 +67,7 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <button @click="submitEmail" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+                    <button @click="submitEmail" class="px-4 py-2 mt-4 text-white bg-blue-600 rounded hover:bg-blue-700">
                         Submit email
                     </button>
                 </div>
@@ -87,7 +87,7 @@ export default {
     props: {
         template: {
             type: String,
-            default: "sonsultation",
+            default: "Consultation",
         },
         tags: {
             type: Array,
