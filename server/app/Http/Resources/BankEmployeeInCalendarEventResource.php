@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ClientEmployeeResource extends JsonResource
+class BankEmployeeInCalendarEventResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,7 +20,7 @@ class ClientEmployeeResource extends JsonResource
             'last_name' => $this->last_name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'role' => new RoleResource($this->role),
+            'accepted' => $this->pivot->accepted,
         ];
     }
 }
