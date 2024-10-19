@@ -4,7 +4,7 @@
         <div class="col-span-12 p-6 bg-white rounded-lg shadow-md lg:col-span-7">
             <h2 class="mb-4 text-xl font-bold text-black">Calendar</h2>
             <CalendarComponent
-                :events="fullCalendarEvents"
+                :events="allCalendarEvents"
                 @calendar-event-click="handleCalendarEventClick"
             />
         </div>
@@ -12,30 +12,30 @@
         <!-- Events Island with CalendarActions stacked in the same column -->
         <div class="flex flex-col col-span-12 space-y-4 lg:col-span-5">
             <!-- Schedule Consultations -->
-            <ScheduleConsultations />
+            <ScheduleConsultations
+                @show-schedule-consultations-popover="showScheduleConsultationsPopover"
+            />
 
             <!-- Urgent CalendarActions Section -->
             <div class="flex-1 p-3 overflow-y-auto bg-gray-100 rounded-lg shadow-md">
-                <h2 class="mb-4 text-lg font-bold text-black">To-Do Events</h2>
+                <h2 class="mb-4 text-lg font-bold text-black">Urgent Actions</h2>
                 <CalendarActionList
                     v-for="todo in todoEvents"
                     :key="todo.id"
-                    @calendar-action-click="handleCalendarEventClick"
+                    @calendar-action-click="handleCalendarActionClick"
                     :action="todo"
                 />
             </div>
 
             <!-- Proposed CalendarActions Section -->
             <div class="flex-1 px-2 overflow-y-auto bg-gray-100 rounded-lg shadow-md">
-                <div class="sticky top-0 bg-gray-100 py-2">
+                <div class="sticky top-0 py-2 bg-gray-100">
                     <h2 class="mb-4 text-lg font-bold text-black">Proposed Actions</h2>
                 </div>
-                <span v-if="isLoadingProposedActions">
-                    Loading proposed actions...
-                </span>
+                <span v-if="isLoadingProposedActions"> Loading proposed actions... </span>
                 <CalendarActionList
                     v-for="proposed in proposedActions"
-                    @calendar-action-click="handleCalendarEventClick"
+                    @calendar-action-click="handleCalendarActionClick"
                     :key="proposed.id"
                     :action="proposed"
                 />
@@ -43,38 +43,53 @@
         </div>
 
         <!-- Popover for displaying selected CalendarAction -->
-        <CalendarActionPopover
-            v-if="selectedCalendarAction"
-            :action="selectedCalendarAction"
-            @eventAccepted="handleEventAccepted"
-            @close="closePopover"
-        />
+        <Transition name="fade-popover">
+            <CalendarActionPopover
+                v-if="selectedCalendarAction"
+                :action="selectedCalendarAction"
+                @eventAccepted="handleEventAccepted"
+                @close="closePopover"
+            />
+        </Transition>
+
+        <!-- Popover for displaying SchedulingConsultation -->
+        <Transition name="fade-popover">
+            <ScheduleConsultationsPopover
+                v-if="shouldDisplayScheduleConsultationsPopover"
+                @close="closePopover"
+            />
+        </Transition>
     </div>
 
-    <div class="flex space-x-4 p-4">
-        <button 
-            v-on:click="switchToCEO" 
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <div class="flex p-4 space-x-4">
+        <button
+            v-on:click="switchToCEO"
+            class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
+        >
             Switch to CEO
         </button>
-        <button 
-            v-on:click="switchToController" 
-            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+        <button
+            v-on:click="switchToController"
+            class="px-4 py-2 font-bold text-white bg-green-500 rounded hover:bg-green-700"
+        >
             Switch to Controller
         </button>
-        <button 
-            v-on:click="switchToCashManagementSpecialist" 
-            class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+        <button
+            v-on:click="switchToCashManagementSpecialist"
+            class="px-4 py-2 font-bold text-white bg-yellow-500 rounded hover:bg-yellow-700"
+        >
             Switch to Cash Management Specialist
-        </button>   
-        <button 
-            v-on:click="switchToAccountant" 
-            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+        </button>
+        <button
+            v-on:click="switchToAccountant"
+            class="px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700"
+        >
             Switch to Accountant
         </button>
-        <button 
-            v-on:click="switchToCommerzbankAdmin" 
-            class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+        <button
+            v-on:click="switchToCommerzbankAdmin"
+            class="px-4 py-2 font-bold text-white bg-purple-500 rounded hover:bg-purple-700"
+        >
             Switch to Commerzbank Admin
         </button>
         <div class="p-4">
@@ -88,6 +103,7 @@ import CalendarComponent from "./components/CalendarComponent.vue";
 import ScheduleConsultations from "./components/ScheduleConsultations.vue";
 import CalendarActionList from "./components/CalendarActionListComponent.vue";
 import CalendarActionPopover from "./components/popovers/CalendarActionPopover.vue";
+import ScheduleConsultationsPopover from "./components/popovers/ScheduleConsultationsPopover.vue";
 
 export default {
     components: {
@@ -95,152 +111,155 @@ export default {
         ScheduleConsultations,
         CalendarActionList,
         CalendarActionPopover,
+        ScheduleConsultationsPopover,
     },
 
     data() {
         return {
-            todoEvents: [
-                {
-                    id: 1,
-                    title: "Meeting with John Doe Investment",
-                    tags: ["meeting", "consultation"],
-                    events: [
-                        {
-                            id: 1,
-                            title: "In Office 7",
-                            start: "2024-10-18T10:00:00",
-                            end: "2024-10-18T11:30:00",
-                        },
-                        {
-                            id: 2,
-                            title: "In Office 8",
-                            start: "2024-10-25T14:00:00",
-                            end: "2024-10-18T15:30:00",
-                        },
-                    ],
-                },
-            ],
+            todoEvents: [],
+            proposedEvents: [],
+            allCalendarEvents: [],
+
             roles: {
-                '2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2': 'CEO',
-                'koP7tEvVel3gfG0gWOjG3bTgrzo1ubzbfsD5vKll2mjVM263aEGPHhIZSIMWNdy1': 'Controller',
-                'Yk7lYm6LaZwpeDW4yJucFVJ5UaqfWbL9Hc9t5SjmgmZXs03HWZQnaBFErTANrFgm': 'Cash Management Specialist',
-                'BB4I3gN8OJZPFfVt4fWuYUYxhvnB0jS6feg0KQCx0u33EIl6aCgbx7qZ1VJOxsm0': 'Accountant',
-                's0G3UTt79wsL4wgIHHBea7ptulrXpCvxIOYRXBdM5rOIbIdasOhAaKRWSJQG1XrU': 'Commerzbank Admin',
+                "2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2": "CEO",
+                koP7tEvVel3gfG0gWOjG3bTgrzo1ubzbfsD5vKll2mjVM263aEGPHhIZSIMWNdy1: "Controller",
+                Yk7lYm6LaZwpeDW4yJucFVJ5UaqfWbL9Hc9t5SjmgmZXs03HWZQnaBFErTANrFgm:
+                    "Cash Management Specialist",
+                BB4I3gN8OJZPFfVt4fWuYUYxhvnB0jS6feg0KQCx0u33EIl6aCgbx7qZ1VJOxsm0: "Accountant",
+                s0G3UTt79wsL4wgIHHBea7ptulrXpCvxIOYRXBdM5rOIbIdasOhAaKRWSJQG1XrU:
+                    "Commerzbank Admin",
             },
             isLoadingProposedActions: false,
             proposedActions: [],
             selectedEvent: null, // Track the selected event for CalendarAction
             selectedCalendarAction: null,
             calendarEventToCalendarActionMap: {}, // Map to store the relationship between calendar events and actions
+            shouldDisplayScheduleConsultationsPopover: false,
         };
     },
 
     computed: {
         currentRole() {
-            const token = localStorage.getItem('bearer_token');
-        
-            return this.roles[token] || 'Unknown';
+            const token = localStorage.getItem("bearer_token");
+
+            return this.roles[token] || "Unknown";
+        },
+    },
+
+    methods: {
+        switchToCEO() {
+            let token = "2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2";
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("bearer_token", token);
+            window.location.reload();
         },
 
-        fullCalendarEvents() {
+        switchToController() {
+            let token = "koP7tEvVel3gfG0gWOjG3bTgrzo1ubzbfsD5vKll2mjVM263aEGPHhIZSIMWNdy1";
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("bearer_token", token);
+            window.location.reload();
+        },
+
+        switchToCashManagementSpecialist() {
+            let token = "Yk7lYm6LaZwpeDW4yJucFVJ5UaqfWbL9Hc9t5SjmgmZXs03HWZQnaBFErTANrFgm";
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("bearer_token", token);
+            window.location.reload();
+        },
+
+        switchToAccountant() {
+            let token = "BB4I3gN8OJZPFfVt4fWuYUYxhvnB0jS6feg0KQCx0u33EIl6aCgbx7qZ1VJOxsm0";
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("bearer_token", token);
+            window.location.reload();
+        },
+
+        switchToCommerzbankAdmin() {
+            let token = "s0G3UTt79wsL4wgIHHBea7ptulrXpCvxIOYRXBdM5rOIbIdasOhAaKRWSJQG1XrU";
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("bearer_token", token);
+            window.location.reload();
+        },
+
+        parseFullCalendarEvents() {
             const events = [];
 
-            this.todoEvents.forEach((todo) => {
-                todo.events.forEach((event) => {
-                    events.push({
-                        id: event.id,
-                        title: todo.title,
-                        start: event.start,
-                        end: event.end,
-                        extendedProps: {
-                            tags: todo.tags,
-                            originalEvent: event,
-                            eventType: "todo", // Indicate the type of event
-                        },
-                    });
-                });
-            });
+            console.log("Todo Events:", this.todoEvents);
 
-            this.proposedActions.forEach((proposed) => {
-                if (proposed.events) {
-                    proposed.events.forEach((event) => {
+            this.todoEvents.forEach((todo) => {
+                console.log("todo", todo);
+                if (todo.calendar_events) {
+                    console.log("Calendar Events:", todo.calendar_events);
+                    todo.calendar_events.forEach((calendarEvent) => {
                         events.push({
-                            id: event.id,
-                            title: proposed.title,
-                            start: event.start,
-                            end: event.end,
+                            id: calendarEvent.uuid,
+                            title: calendarEvent.title,
+                            start: calendarEvent.start_date,
+                            end: calendarEvent.end_date,
                             extendedProps: {
-                                tags: proposed.tags,
-                                originalEvent: event,
-                                eventType: "proposed", // Indicate the type of event
+                                tags: todo.tags || [],
+                                originalEvent: calendarEvent,
                             },
                         });
                     });
                 }
             });
 
-            return events;
-        },
-    },
+            console.log("Full Calendar Events:", events);
 
-    methods: {
-        switchToCEO() {
-            let token = '2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2';
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            localStorage.setItem('bearer_token', token);
-            window.location.reload();
-        },
-        
-        switchToController() {
-            let token = 'koP7tEvVel3gfG0gWOjG3bTgrzo1ubzbfsD5vKll2mjVM263aEGPHhIZSIMWNdy1';
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            localStorage.setItem('bearer_token', token);
-            window.location.reload();
-        },
-
-        switchToCashManagementSpecialist() {
-            let token = 'Yk7lYm6LaZwpeDW4yJucFVJ5UaqfWbL9Hc9t5SjmgmZXs03HWZQnaBFErTANrFgm';
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            localStorage.setItem('bearer_token', token);
-            window.location.reload();
-        },
-
-        switchToAccountant() {
-            let token = 'BB4I3gN8OJZPFfVt4fWuYUYxhvnB0jS6feg0KQCx0u33EIl6aCgbx7qZ1VJOxsm0';
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            localStorage.setItem('bearer_token', token);
-            window.location.reload();
-        },
-        
-        switchToCommerzbankAdmin() {
-            let token = 's0G3UTt79wsL4wgIHHBea7ptulrXpCvxIOYRXBdM5rOIbIdasOhAaKRWSJQG1XrU';
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            localStorage.setItem('bearer_token', token);
-            window.location.reload();
+            this.allCalendarEvents = events;
         },
 
         loadProposedActions() {
             this.isLoadingProposedActions = true;
 
-            axios.get('/calendar-action-templates', {
-
-            }).then((response) => {
-                this.proposedActions = response.data.data;
-
-                this.buildCalendarEventToCalendarActionMap();
-            }).catch((error) => {
-                console.error("Error loading proposed actions:", error);
-            }).finally(() => {
-                this.isLoadingProposedActions = false;
-            });
+            axios
+                .get("/calendar-action-templates", {})
+                .then((response) => {
+                    this.proposedActions = response.data.data;
+                })
+                .catch((error) => {
+                    console.error("Error loading proposed actions:", error);
+                })
+                .finally(() => {
+                    this.isLoadingProposedActions = false;
+                });
         },
 
-        handleCalendarEventClick(eventId) {
-            console.log("Calendar Event Clicked:", eventId);
-            const calendarAction = this.calendarEventToCalendarActionMap[eventId];
+        loadUrgentCalendarActions() {
+            this.isLoadingUrgentCalendarActions = true;
+
+            axios
+                .get("/calendar-actions", {})
+                .then((response) => {
+                    this.todoEvents = response.data.data;
+
+                    this.buildCalendarEventToCalendarActionMap();
+                })
+                .catch((error) => {
+                    console.error("Error loading proposed actions:", error);
+                })
+                .finally(() => {
+                    this.isLoadingUrgentCalendarActions = false;
+                });
+        },
+
+        handleCalendarEventClick(eventUuid) {
+            const calendarAction = this.calendarEventToCalendarActionMap[eventUuid];
 
             if (calendarAction) {
                 this.selectedCalendarAction = calendarAction.parentCalendarAction;
+            } else {
+                console.error("Event not found in the map!");
+            }
+        },
+
+        handleCalendarActionClick(calendarActionUuid) {
+            const calendarAction = this.todoEvents.find((todo) => todo.uuid === calendarActionUuid);
+
+            if (calendarAction) {
+                this.selectedCalendarAction = calendarAction;
                 console.log("Selected CalendarAction:", this.selectedCalendarAction);
             } else {
                 console.error("Event not found in the map!");
@@ -255,43 +274,55 @@ export default {
          */
         buildCalendarEventToCalendarActionMap() {
             this.todoEvents.forEach((todo) => {
-                todo.events.forEach((event) => {
-                    this.calendarEventToCalendarActionMap[event.id] = {
+                todo.calendar_events.forEach((event) => {
+                    this.calendarEventToCalendarActionMap[event.uuid] = {
                         parentCalendarAction: todo,
                     };
                 });
             });
 
-            this.proposedActions.forEach((proposed) => {
-                if (proposed.events) {
-                    proposed.events.forEach((event) => {
-                        this.calendarEventToCalendarActionMap[event.id] = {
-                            parentCalendarAction: proposed,
-                        };
-                    });
-                }
-            });
-
-            console.log("Calendar Event Map:", this.calendarEventToCalendarActionMap);
+            this.parseFullCalendarEvents();
         },
 
         closePopover() {
             this.selectedCalendarAction = null;
+            this.shouldDisplayScheduleConsultationsPopover = false;
+        },
+
+        showScheduleConsultationsPopover() {
+            this.shouldDisplayScheduleConsultationsPopover = true;
         },
     },
 
     mounted() {
-        if (localStorage.getItem('bearer_token')) {
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('bearer_token')}`;
+        if (localStorage.getItem("bearer_token")) {
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem(
+                "bearer_token",
+            )}`;
         } else {
             this.switchToCEO();
         }
 
         this.loadProposedActions();
+        this.loadUrgentCalendarActions();
 
         this.buildCalendarEventToCalendarActionMap();
     },
 };
 </script>
 
-<style scoped></style>
+<style>
+/* Custom transition for all popovers */
+.fade-popover-enter-active,
+.fade-popover-leave-active {
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+.fade-popover-enter, .fade-popover-leave-to /* .fade-popover-leave-active for <2.1.8 */ {
+    opacity: 0;
+    transform: translateY(-10px); /* Optional: adds a slight slide-up effect */
+}
+.fade-popover-leave-active {
+    opacity: 0;
+    transform: translateY(0);
+}
+</style>

@@ -1,8 +1,8 @@
 <template>
-    <div class="bg-yellow-500 text-white shadow-md p-6 rounded-lg hover:bg-yellow-600 transition">
+    <div class="p-6 text-white transition bg-yellow-500 rounded-lg shadow-md hover:bg-yellow-600">
         <button
             @click="handleScheduleConsultations"
-            class="bg-white text-yellow-500 px-4 py-2 font-semibold rounded-lg shadow-md hover:bg-yellow-100 transition"
+            class="px-4 py-2 font-semibold text-yellow-500 transition bg-white rounded-lg shadow-md hover:bg-yellow-100"
         >
             Schedule Consultations
         </button>
@@ -13,7 +13,8 @@
 export default {
     methods: {
         handleScheduleConsultations() {
-            console.log("Schedule Consultations button clicked!");
+            console.log("Show consultation scheduling popover form.");
+            this.$emit("show-schedule-consultations-popover");
         },
     },
 };

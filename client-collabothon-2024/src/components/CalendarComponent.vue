@@ -1,6 +1,11 @@
 <template>
     <div>
-        <FullCalendar :events="events" @event-click="handleEventClick" :options="calendarOptions" />
+        <FullCalendar
+            ref="fullCalendar"
+            :events="currentEvents"
+            @event-click="handleEventClick"
+            :options="calendarOptions"
+        />
     </div>
 </template>
 
@@ -23,6 +28,7 @@ export default {
     data() {
         return {
             selectedEvent: null,
+            currentEvents: [],
 
             calendarOptions: {
                 plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -34,10 +40,9 @@ export default {
                 },
                 editable: true,
                 selectable: true,
-                initialEvents: this.events,
                 select: this.handleDateSelect,
                 eventClick: this.handleEventClick,
-                eventsSet: this.handleEvents,
+                timeZone: "local",
             },
         };
     },
@@ -60,16 +65,63 @@ export default {
             }
         },
 
+        convertToLocalDate(dateString) {
+            if (!dateString) {
+                console.error("Invalid date string:", dateString);
+                return null; // Return null for invalid date strings
+            }
+
+            const date = new Date(dateString);
+
+            if (isNaN(date)) {
+                console.error("Invalid date value:", dateString);
+                return null; // Return null for invalid date values
+            }
+
+            return date.toISOString(); // Format: YYYY-MM-DDTHH:mm:ss.sssZ
+        },
+
+        fullCalendarEvents(events) {
+            return events.map((event) => {
+                const start = this.convertToLocalDate(event.start); // Use the correct field names
+                const end = this.convertToLocalDate(event.end);
+
+                // Ensure valid dates before returning the event
+                return {
+                    id: event.id || event.uuid, // Ensure we use a valid ID
+                    title: event.title,
+                    start: start || undefined, // Set to undefined if invalid
+                    end: end || undefined, // Set to undefined if invalid
+                    extendedProps: {
+                        tags: event.tags || [],
+                        originalEvent: event, // Pass the original event for more details
+                        clientEmployees: event.client_employees || [],
+                        bankEmployees: event.bank_employees || [],
+                    },
+                };
+            });
+        },
+
         handleEventClick(info) {
             const clickedEvent = info.event;
-            
+
             if (clickedEvent.id) {
                 this.$emit("calendar-event-click", clickedEvent.id);
             }
         },
+    },
 
-        handleEvents(events) {
-            this.currentEvents = events;
+    watch: {
+        events: {
+            immediate: true,
+            handler(newEvents) {
+                this.currentEvents = this.fullCalendarEvents(newEvents);
+                this.$nextTick(() => {
+                    const calendarApi = this.$refs.fullCalendar.getApi();
+                    calendarApi.removeAllEvents(); // Clear existing events
+                    calendarApi.addEventSource(this.currentEvents); // Add new events
+                });
+            },
         },
     },
 };
