@@ -6,6 +6,7 @@
             <CalendarComponent
                 :events="allCalendarEvents"
                 @calendar-event-click="handleCalendarEventClick"
+                @calendar-view-range-change="handleCalendarViewRangeChange"
             />
         </div>
 
@@ -199,6 +200,9 @@ export default {
             ],
 
             tagOptions: [],
+
+            selectedCalendarViewRangeStart: null,
+            selectedCalendarViewRangeEnd: null,
         };
     },
 
@@ -246,7 +250,26 @@ export default {
             window.location.reload();
         },
 
+        handleCalendarViewRangeChange(range) {
+            if (!range || !range.start || !range.end) return;
+
+            const newRange = { start: range.start, end: range.end };
+            const currentRangeString = JSON.stringify(this.selectedCalendarViewRange);
+            const newRangeString = JSON.stringify(newRange);
+
+            if (currentRangeString === newRangeString) {
+                return; // Do nothing if the range is the same
+            }
+
+            this.selectedCalendarViewRangeStart = range.start;
+            this.selectedCalendarViewRangeEnd = range.end;
+
+            this.filterUrgentCalendarActions();
+        },
+
         filterUrgentCalendarActions() {
+            console.log("Filtering urgent calendar actions...");
+
             let filtered = this.todoEvents;
 
             if (this.selectedStatus && this.selectedStatus.name) {
@@ -261,6 +284,33 @@ export default {
                         event.tags.some((tag) => tag.tag === selectedTag.tag),
                     ),
                 );
+            }
+
+            // Filter by the selected date range
+            if (this.selectedCalendarViewRangeStart && this.selectedCalendarViewRangeEnd) {
+                const start = this.selectedCalendarViewRangeStart;
+                const end = this.selectedCalendarViewRangeEnd;
+
+                console.log("Filtering by date range:", start, end);
+
+                filtered = filtered.filter((calendarAction) => {
+                    const calendarEvents = calendarAction.calendar_events || [];
+
+                    const isInRange = calendarEvents.some((event) => {
+                        const eventStart = new Date(event.start_date);
+                        const eventEnd = new Date(event.end_date);
+
+                        // Check if the CalendarEvent falls within the selected range
+                        return (
+                            (eventStart >= start && eventStart <= end) ||
+                            (eventEnd >= start && eventEnd <= end) ||
+                            (eventStart <= start && eventEnd >= end) // The event covers the range
+                        );
+                    });
+
+                    // Return true if any calendarEvent is in range or if there are no associated calendar_events
+                    return isInRange || calendarEvents.length === 0;
+                });
             }
 
             this.filteredUrgentCalendarActions = filtered;
@@ -279,7 +329,7 @@ export default {
                             start: calendarEvent.start_date,
                             end: calendarEvent.end_date,
                             extendedProps: {
-                                tags: todo.tags || [],
+                                tags: calendarEvent.tags || [],
                                 originalEvent: calendarEvent,
                             },
                         });
