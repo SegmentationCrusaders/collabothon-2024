@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Helpers\ClientEmployeeAuth;
+use App\Helpers\APIAuth;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Auth::viaRequest('apiKey', function ($request) {
-            return ClientEmployeeAuth::tryAuthenticate($request);
+            return APIAuth::tryAuthenticate($request);
         });
     }
 }

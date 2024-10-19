@@ -17,8 +17,8 @@ class CalendarEventFactory extends Factory
      */
     public function definition(): array
     {
-        $startDate = Carbon::parse(fake()->dateTimeBetween('now', '+1 week'));
-        $endDate = $startDate->copy()->addHours(2);
+        $startDate = Carbon::parse(fake()->dateTimeBetween('-1 month', '+1 month'));
+        $endDate = $startDate->copy()->addMinutes(fake()->numberBetween(30, 180));
 
         $location = fake()->boolean() ? fake()->address() : "ONLINE";
 

@@ -16,7 +16,7 @@ class CalendarActionStatus extends Model
      * @var array
      */
     protected $fillable = [
-        'status',
+        'name',
         'calendar_action_id',
     ];
 
