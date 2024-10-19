@@ -21,17 +21,24 @@ class CalendarEventActionController extends Controller
     public function accept(string $uuid): JsonResponse
     {
         try {
+            $requester = Auth::user();
             $targetEvent = QueryBuilder::for(CalendarEvent::class)
                 ->where('uuid', '=', $uuid)
                 ->whereHasPermission(Auth::user(), CalendarEvent::class)
                 ->firstOrFail()
             ;
 
-            $targetEvent->clientEmployees()->updateExistingPivot($targetEvent, ['accepted' => 1]);
-            $targetEvent->bankEmployees()->updateExistingPivot($targetEvent, ['accepted' => 1]);
+            if ($requester instanceof ClientEmployee) {
+                $targetEvent->clientEmployees()->updateExistingPivot($requester, ['accepted' => 1]);
+            } else {
+                $targetEvent->bankEmployees()->updateExistingPivot($requester, ['accepted' => 1]);
+            }
 
+            return response()->json(['message' => 'Event has been accepted successfully.']);
         } catch (Exception $e) {
+            Log::error('Failed to accept the calendar event: ' . $e->getMessage());
 
+            return response()->json(['error' => 'Failed to accept the event.' . $e->getMessage()], 500);
         }
     }
 
@@ -44,9 +51,10 @@ class CalendarEventActionController extends Controller
                 ->firstOrFail()
             ;
 
-            DB::transaction(function() use ($targetEvent) {
+            DB::transaction(static function() use ($targetEvent) {
                 $targetEvent->deleted_at = (string)now();
                 $targetEvent->save();
+
                 $targetEvent->clientEmployees()->updateExistingPivot($targetEvent, ['accepted' => 0]);
                 $targetEvent->bankEmployees()->updateExistingPivot($targetEvent, ['accepted' => 0]);
             });

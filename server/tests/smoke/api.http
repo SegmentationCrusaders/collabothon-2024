@@ -22,3 +22,11 @@ Authorization: Bearer 2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa
   "start_date": "2028-05-11 11:00",
   "end_date": "2028-06-11 11:00"
 }
+
+### Approve calendar event
+
+POST /api/v1/calendar-event-accept/5d565b35-caae-4e4e-bdb3-2ae9aa01ccd5
+Host: localhost:8000
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer 2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2
