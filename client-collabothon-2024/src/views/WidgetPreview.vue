@@ -1,26 +1,5 @@
 <template>
-    <div class="p-4 mx-auto max-w-1/4 lg:w-1/4 md:w-2/3 sm:w-full">
-        <!-- Popover for displaying SchedulingConsultation -->
-        <Transition name="fade-popover">
-            <ScheduleConsultationsPopover
-                v-if="shouldDisplayScheduleConsultationsPopover"
-                :template="template"
-                :tags="tags"
-                @emailSubmitted="loadUrgentCalendarActions"
-                @close="closePopover"
-            />
-        </Transition>
-
-        <!-- Popover for displaying selected CalendarAction -->
-        <Transition name="fade-popover">
-            <CalendarActionPopover
-                v-if="selectedCalendarAction"
-                :action="selectedCalendarAction"
-                @eventAccepted="handleEventAccepted"
-                @close="closePopover"
-            />
-        </Transition>
-
+    <div class="p-4 mx-auto max-w-1/4 lg:w-1/4 md:w-2/3 sm:w-full" v-if="loggedUser">
         <!-- Schedule Consultations Section -->
         <div class="mb-6">
             <ScheduleConsultations
@@ -32,7 +11,7 @@
         </div>
 
         <!-- Urgent CalendarActions Section with Filter -->
-        <div class="p-6 bg-gray-100 border rounded-lg commerzbank-shadow commerzbank-border">
+        <div class="p-6 bg-white border rounded-lg commerzbank-shadow commerzbank-border">
             <!-- Filter Bar -->
             <div class="flex flex-col mb-6 lg:flex-row lg:space-x-4">
                 <!-- Status Filter -->
@@ -91,20 +70,41 @@
         </div>
 
         <!-- CEO or Admin Section -->
-        <div v-if="$root.loggedUser">
-            <div
-                v-if="
-                    $root.loggedUser?.role?.name == 'CEO' ||
-                    $root.loggedUser?.role?.name == 'Controller' ||
-                    $root.loggedUser?.role?.name == 'Commerzbank admin'
-                "
-            >
-                <div class="p-4 rounded-lg bg-gray-50 commerzbank-shadow commerzbank-border">
-                    <CalendarActionIdeaCarousel @onCreate="showScheduleConsultationsPopover" />
-                </div>
+        <div
+            v-if="
+                loggedUser.role.name == 'CEO' ||
+                loggedUser.role.name == 'Controller' ||
+                loggedUser.role.name == 'Commerzbank admin'
+            "
+        >
+            <div class="rounded-lg">
+                <CalendarActionIdeaCarousel @onCreate="showScheduleConsultationsPopover" />
             </div>
         </div>
+
+                <!-- Popover for displaying SchedulingConsultation -->
+                <Transition name="fade-popover">
+            <ScheduleConsultationsPopover
+                v-if="shouldDisplayScheduleConsultationsPopover"
+                :template="template"
+                :tags="tags"
+                @emailSubmitted="loadUrgentCalendarActions"
+                @close="closePopover"
+            />
+        </Transition>
+
+        <!-- Popover for displaying selected CalendarAction -->
+        <Transition name="fade-popover">
+            <CalendarActionPopover
+                v-if="selectedCalendarAction"
+                :action="selectedCalendarAction"
+                @eventAccepted="handleEventAccepted"
+                @close="closePopover"
+            />
+        </Transition>
     </div>
+
+    <DebugUtils v-if="loggedUser" />
 </template>
 
 <script>
@@ -115,6 +115,7 @@ import ScheduleConsultationsPopover from "../components/popovers/ScheduleConsult
 import CalendarActionIdeaCarousel from "../components/CalendarActionIdeaCarousel.vue";
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.min.css";
+import DebugUtils from "../components/DebugUtils.vue";
 
 export default {
     components: {
@@ -124,6 +125,7 @@ export default {
         ScheduleConsultationsPopover,
         CalendarActionIdeaCarousel,
         Multiselect,
+        DebugUtils,
     },
     data() {
         return {
@@ -136,6 +138,8 @@ export default {
                 { name: "CANCELLED" },
             ],
             tagOptions: [],
+            loggedUser: null,
+            shouldDisplayScheduleConsultationsPopover: false,
 
             selectedCalendarAction: null,
             allUrgentCalendarActions: [],
@@ -234,6 +238,7 @@ export default {
             axios
                 .get("/user", {})
                 .then((response) => {
+                    this.loggedUser = response.data.data;
                     this.$root.loggedUser = response.data.data;
                 })
                 .catch((error) => {

@@ -1,5 +1,5 @@
 <template>
-    <div class="grid grid-cols-12 gap-4 p-8">
+    <div class="grid grid-cols-12 gap-4 p-8" v-if="loggedUser">
         <!-- Calendar Island in the first section -->
         <div
             class="col-span-12 p-6 bg-white border rounded-lg commerzbank-shadow lg:col-span-7 commerzbank-border"
@@ -23,7 +23,7 @@
 
             <!-- Urgent CalendarActions Section with Filter -->
             <div
-                class="flex-1 p-3 overflow-y-auto bg-gray-100 border rounded-lg commerzbank-shadow max-h-96 commerzbank-border"
+                class="flex-1 p-3 overflow-y-auto bg-white border rounded-lg commerzbank-shadow max-h-96 commerzbank-border"
             >
                 <!-- Filter Bar -->
                 <div class="flex items-center mb-4 space-x-2">
@@ -82,16 +82,14 @@
                 </div>
             </div>
 
-            <div v-if="$root.loggedUser">
-                <div
-                    v-if="
-                        $root.loggedUser?.role?.name == 'CEO' ||
-                        $root.loggedUser?.role?.name == 'Controller' ||
-                        $root.loggedUser?.role?.name == 'Commerzbank admin'
-                    "
-                >
-                    <CalendarActionIdeaCarousel @onCreate="showScheduleConsultationsPopover" />
-                </div>
+            <div
+                v-if="
+                    loggedUser.role.name == 'CEO' ||
+                    loggedUser.role.name == 'Controller' ||
+                    loggedUser.role.name == 'Commerzbank admin'
+                "
+            >
+                <CalendarActionIdeaCarousel @onCreate="showScheduleConsultationsPopover" />
             </div>
         </div>
 
@@ -116,42 +114,8 @@
             />
         </Transition>
     </div>
-
-    <div class="flex p-4 space-x-4">
-        <button
-            v-on:click="switchToCEO"
-            class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
-        >
-            Switch to CEO
-        </button>
-        <button
-            v-on:click="switchToController"
-            class="px-4 py-2 font-bold text-white bg-green-500 rounded hover:bg-green-700"
-        >
-            Switch to Controller
-        </button>
-        <button
-            v-on:click="switchToCashManagementSpecialist"
-            class="px-4 py-2 font-bold text-white bg-yellow-500 rounded hover:bg-yellow-700"
-        >
-            Switch to Cash Management Specialist
-        </button>
-        <button
-            v-on:click="switchToAccountant"
-            class="px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700"
-        >
-            Switch to Accountant
-        </button>
-        <button
-            v-on:click="switchToCommerzbankAdmin"
-            class="px-4 py-2 font-bold text-white bg-purple-500 rounded hover:bg-purple-700"
-        >
-            Switch to Commerzbank Admin
-        </button>
-        <div class="p-4">
-            <p class="text-lg font-bold">Current Role: {{ currentRole }}</p>
-        </div>
-    </div>
+    
+    <DebugUtils v-if="loggedUser" />
 </template>
 
 <script>
@@ -163,6 +127,7 @@ import ScheduleConsultationsPopover from "../components/popovers/ScheduleConsult
 import CalendarActionIdeaCarousel from "../components/CalendarActionIdeaCarousel.vue";
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.min.css";
+import DebugUtils from "../components/DebugUtils.vue";
 
 export default {
     components: {
@@ -173,6 +138,7 @@ export default {
         ScheduleConsultationsPopover,
         CalendarActionIdeaCarousel,
         Multiselect,
+        DebugUtils,
     },
 
     data() {
@@ -182,6 +148,7 @@ export default {
             proposedEvents: [],
             allCalendarEvents: [],
             template: "consultation",
+            loggedUser: null,
 
             roles: {
                 "2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2": "CEO",
@@ -216,50 +183,7 @@ export default {
         };
     },
 
-    computed: {
-        currentRole() {
-            const token = localStorage.getItem("bearer_token");
-
-            return this.roles[token] || "Unknown";
-        },
-    },
-
     methods: {
-        switchToCEO() {
-            let token = "2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2";
-            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-            localStorage.setItem("bearer_token", token);
-            window.location.reload();
-        },
-
-        switchToController() {
-            let token = "koP7tEvVel3gfG0gWOjG3bTgrzo1ubzbfsD5vKll2mjVM263aEGPHhIZSIMWNdy1";
-            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-            localStorage.setItem("bearer_token", token);
-            window.location.reload();
-        },
-
-        switchToCashManagementSpecialist() {
-            let token = "Yk7lYm6LaZwpeDW4yJucFVJ5UaqfWbL9Hc9t5SjmgmZXs03HWZQnaBFErTANrFgm";
-            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-            localStorage.setItem("bearer_token", token);
-            window.location.reload();
-        },
-
-        switchToAccountant() {
-            let token = "BB4I3gN8OJZPFfVt4fWuYUYxhvnB0jS6feg0KQCx0u33EIl6aCgbx7qZ1VJOxsm0";
-            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-            localStorage.setItem("bearer_token", token);
-            window.location.reload();
-        },
-
-        switchToCommerzbankAdmin() {
-            let token = "s0G3UTt79wsL4wgIHHBea7ptulrXpCvxIOYRXBdM5rOIbIdasOhAaKRWSJQG1XrU";
-            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-            localStorage.setItem("bearer_token", token);
-            window.location.reload();
-        },
-
         handleCalendarViewRangeChange(range) {
             if (!range || !range.start || !range.end) return;
 
@@ -453,6 +377,7 @@ export default {
             axios
                 .get("/user", {})
                 .then((response) => {
+                    this.loggedUser = response.data.data;
                     this.$root.loggedUser = response.data.data;
                 })
                 .catch((error) => {

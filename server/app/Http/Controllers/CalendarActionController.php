@@ -83,8 +83,6 @@ class CalendarActionController extends Controller
         $endDate = $startDate->copy()->addMinutes(rand(30, 180));
 
         $calendarEvent = CalendarEvent::create([
-            'title' => $calendarAction->title,
-            'description' => $calendarAction->description,
             'location' => fake()->boolean() ? fake()->address() : "ONLINE",
             'start_date' => $startDate,
             'end_date' => $endDate,

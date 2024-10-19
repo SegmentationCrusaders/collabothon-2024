@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    @apply bg-gray-200;
+}
+
 .commerzbank-color {
     color: #fbb809;
 }
@@ -12,6 +19,7 @@
 
 .commerzbank-border {
     border-color: #fbb809;
+    border-width: 2px;
 }
 
 .commerzbank-shadow {

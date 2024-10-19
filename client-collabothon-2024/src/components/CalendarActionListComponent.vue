@@ -14,7 +14,8 @@
             <span
                 v-for="tag in action.tags"
                 :key="tag.uuid"
-                class="flex items-center px-2 py-1 mr-1 text-green-800 bg-green-100 rounded-full"
+                class="flex items-center px-2 py-1 mr-1 text-white rounded-full"
+                :style="{ backgroundColor: '#002d64' }"
             >
                 <i class="mr-1 fas fa-tag"></i>
                 {{ tag.tag }}

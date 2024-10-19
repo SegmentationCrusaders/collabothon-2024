@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('calendar_events', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->string('title');
             $table->string('location');
             $table->foreignId('calendar_action_id')->references('id')->on('calendar_actions')->cascadeOnDelete();
             $table->timestampTz('start_date');

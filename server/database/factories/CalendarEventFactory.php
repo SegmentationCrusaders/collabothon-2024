@@ -23,7 +23,6 @@ class CalendarEventFactory extends Factory
         $location = fake()->boolean() ? fake()->address() : "ONLINE";
 
         return [
-            'title' => fake()->sentence(),
             'location' => $location,
             'start_date' => $startDate,
             'end_date' => $endDate,

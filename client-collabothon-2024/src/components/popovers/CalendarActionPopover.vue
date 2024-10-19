@@ -1,9 +1,9 @@
 <template>
     <div
-        class="fixed inset-0 z-20 flex items-center justify-center"
+        class="fixed inset-0 z-20 flex items-center justify-center bg-gray-800 bg-opacity-75"
         @click="closePopoverOnOutsideClick"
     >
-        <div class="relative flex w-3/4 p-4 bg-white rounded-lg shadow-lg" @click.stop>
+        <div class="relative flex w-3/4 p-4 bg-white rounded-lg shadow-lg commerzbank-border" @click.stop>
             <!-- Close button (X) -->
             <button
                 @click="closePopover"
@@ -15,15 +15,16 @@
             <!-- Left side: CalendarAction Info -->
             <div class="w-2/3 p-4 border-r border-gray-300">
                 <h3 class="my-2 text-xl font-bold">Title: {{ action?.title }}</h3>
-                <span
+                <span 
                     v-for="tag in action.tags"
                     :key="tag"
-                    class="px-2 py-1 text-green-800 bg-green-100 rounded-full"
+                    class="px-4 mx-1 py-1 text-white rounded-full"
+                    :style="{ backgroundColor: '#002d64' }"
                 >
                     {{ tag.tag }}
                 </span>
 
-                <CalendarActionStatus :action="action" />
+                <CalendarActionStatus class="mt-1" :action="action" />
                 
                 <p class="my-2 text-gray-600">Description: {{ action?.description }}</p>
 
@@ -128,7 +129,8 @@
               </div>
                 <button
                     @click="createNewDate(action.uuid)"
-                    class="w-full p-2 mt-4 text-white bg-blue-500 rounded"
+                    class="w-full p-2 mt-4 text-white rounded"
+                    :style="{ backgroundColor: '#002d64' }"
                 >
                     Create New Date
                 </button>
@@ -260,7 +262,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-/* Add your custom styling here */
-</style>
