@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\Enums\RoleEnum;
 use App\Models\BankEmployee;
 use App\Models\CalendarAction;
 use App\Models\CalendarActionStatus;
 use App\Models\CalendarActionTag;
+use App\Models\CalendarActionTemplate;
 use App\Models\CalendarEvent;
 use App\Models\Client;
 use App\Models\ClientEmployee;
@@ -19,47 +21,121 @@ class ClientEmployeeSeeder extends Seeder
      */
     public function run(): void
     {
-        $generalAdvisor = BankEmployee::factory()->create();
-        $specialists = BankEmployee::factory(rand(2, 3))->create();
+        $specialistsData = [
+            [
+                'first_name' => 'Lars',
+                'last_name' => 'LoanSpecialist',
+                'email' => 'Lars.Loan@commerzbank.com',
+                'phone' => '+49-69-123-8391'
+            ],
+            [
+                'first_name' => 'Frederic',
+                'last_name' => 'FXSpecialist',
+                'email' => 'FXFred@commerzbank.com',
+                'phone' => '+49-69-123-8643'
+            ]
+        ];
+
+        foreach ($specialistsData as $specialistData) {
+            BankEmployee::create($specialistData);
+        }
+
+        $specialists = BankEmployee::all();
+
+        $generalAdvisor = BankEmployee::create([
+            'first_name' => 'Celia',
+            'last_name' => 'CRM',
+            'email' => 'Celia.CRM@commerzbank.com',
+            'phone' => '+49-69-123-4567'
+        ]);
 
         $client = Client::factory()
             ->for($generalAdvisor)
             ->create();
 
-        $roles = Role::all();
         $tags = CalendarActionTag::all();
 
-        $roles->each(function (Role $role) use ($client, $tags, $specialists) {
-            $clientEmployees = ClientEmployee::factory(2)
-                ->for($client)
-                ->for($role)
-                ->create();
+        $clientEmployeesData = [
+            [
+                'first_name' => 'Charles',
+                'last_name' => 'Conntrolling',
+                'email' => 'ControllingCharlie@midcap.com',
+                'phone' => '+49-30-434-8891',
+                'role_id' => Role::firstOrCreate([
+                    'name' => RoleEnum::CONTROLLER->value
+                ])->id,
+                'client_id' => $client->id
+            ],
+            [
+                'first_name' => 'Karen',
+                'last_name' => 'Accounting',
+                'email' => 'KarenFromFinance@midcap.com',
+                'phone' => '+49-30-434-0667',
+                'role_id' => Role::firstOrCreate([
+                    'name' => RoleEnum::ACCOUNTANT->value
+                ])->id,
+                'client_id' => $client->id
+            ],
+            [
+                'first_name' => 'Karen',
+                'last_name' => 'Accounting',
+                'email' => 'KarenFromFinance@midcap.com',
+                'phone' => '+49-30-434-0007',
+                'role_id' => Role::firstOrCreate([
+                    'name' => RoleEnum::CEO->value
+                ])->id,
+                'client_id' => $client->id
+            ],
+            [
+                'first_name' => 'Joseph',
+                'last_name' => 'CashFlowManager',
+                'email' => 'CashFlowJoe@midcap.com',
+                'phone' => '+49-30-434-9911',
+                'role_id' => Role::firstOrCreate([
+                    'name' => RoleEnum::CASH_MANAGEMENT_SPECIALIST->value
+                ])->id,
+                'client_id' => $client->id
+            ]
+        ];
 
-            $clientEmployees->each(function (ClientEmployee $clientEmployee) use ($tags, $specialists) {
-                $calendarActions = CalendarAction::factory(5)
-                    ->for($clientEmployee)
-                    ->hasAttached($tags->random())
+        $calendarActionTemplates = CalendarActionTemplate::all();
+
+        foreach ($clientEmployeesData as $clientEmployeeData) {
+            $clientEmployee = ClientEmployee::create($clientEmployeeData);
+
+            $randomTemplates = $calendarActionTemplates->random(5);
+
+            $calendarActions = collect();
+            foreach ($randomTemplates as $randomTemplate) {
+                // create from template
+                $calendarAction = CalendarAction::create([
+                    'title' => $randomTemplate->title,
+                    'description' => $randomTemplate->description,
+                    'client_employee_id' => $clientEmployee->id
+                ]);
+                $calendarAction->calendarActionTags()->attach($randomTemplate->calendarActionTags->pluck('id'));
+
+                $calendarActions->push($calendarAction);
+            }
+
+            $calendarActions->each(function (CalendarAction $calendarAction) use ($clientEmployee, $specialists) {
+                $calendarEvents = CalendarEvent::factory(2)
+                    ->for($calendarAction)
+                    ->hasAttached($specialists, ['accepted' => true])
                     ->create();
 
-                $calendarActions->each(function (CalendarAction $calendarAction) use ($clientEmployee, $specialists) {
-                    $calendarEvents = CalendarEvent::factory(4)
-                        ->for($calendarAction)
-                        ->hasAttached($specialists, ['accepted' => true])
-                        ->create();
-
-                    $calendarEvents->each(function (CalendarEvent $calendarEvent) use ($clientEmployee) {
-                        $calendarEvent->clientEmployees()->attach($clientEmployee);
-                    });
-
-                    $calendarAction->calendarEvents()->saveMany($calendarEvents);
-
-                    $calendarActionStatuses = CalendarActionStatus::factory(4)
-                        ->for($calendarAction)
-                        ->create();
-
-                    $calendarAction->calendarActionStatuses()->saveMany($calendarActionStatuses);
+                $calendarEvents->each(function (CalendarEvent $calendarEvent) use ($clientEmployee) {
+                    $calendarEvent->clientEmployees()->attach($clientEmployee);
                 });
+
+                $calendarAction->calendarEvents()->saveMany($calendarEvents);
+
+                $calendarActionStatuses = CalendarActionStatus::factory(4)
+                    ->for($calendarAction)
+                    ->create();
+
+                $calendarAction->calendarActionStatuses()->saveMany($calendarActionStatuses);
             });
-        });
+        }
     }
 }

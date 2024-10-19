@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class CalendarActionTemplate extends Model
@@ -52,5 +53,15 @@ class CalendarActionTemplate extends Model
     public function calendarActionTags(): BelongsToMany
     {
         return $this->belongsToMany(CalendarActionTag::class);
+    }
+
+    /**
+     * Get the ideas that are assigned to this template.
+     *
+     * @return HasMany
+     */
+    public function ideas(): HasMany
+    {
+        return $this->hasMany(Idea::class);
     }
 }
