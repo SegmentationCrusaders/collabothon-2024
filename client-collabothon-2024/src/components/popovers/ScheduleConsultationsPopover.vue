@@ -19,7 +19,7 @@
                 <div class="flex items center justify-between mb-4">
                     <div class="flex items-center comarzbank-bg rounded-lg p-2">
                         <span class="text-sm font-semibold text-white">Template:</span>
-                        <span class="ml-2 text-sm font-semibold text-white">{{ template }}</span>
+                        <span class="ml-2 text-sm font-semibold text-white">{{ currentTemplate }}</span>
                     </div>
                 </div>
 
@@ -66,9 +66,11 @@
                     </div>
                 </div>
 
-                <button @click="submitEmail" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
-                    Submit email
-                </button>
+                <div class="flex justify-end">
+                    <button @click="submitEmail" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+                        Submit email
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -87,9 +89,15 @@ export default {
             type: String,
             default: "sonsultation",
         },
+        tags: {
+            type: Array,
+            default: () => [],
+        },
     },
+    emits: ["close", "emailSubmitted"],
     data() {
         return {
+            currentTemplate: "consultation",
             emailTitle: "Consultation Request",
             emailDescription: `We believe that your expertise and insights would be invaluable to us. We are eager to discuss potential opportunities and collaborations that could benefit both parties.
 Please let us know your availability so we can arrange a convenient time for the consultation. If you have any questions or need further information, do not hesitate to reach out to us.
@@ -133,7 +141,6 @@ Looking forward to your positive response.`,
 
             })
             .then((response) => {
-                console.log;
                 this.availableTags = response.data.data;
             })
             .catch((error) => {
@@ -142,13 +149,25 @@ Looking forward to your positive response.`,
         },
 
         submitEmail() {
-
+            axios.post('/calendar-actions', {
+                title: this.emailTitle,
+                description: this.emailDescription,
+                tags: this.selectedTags.map((tag) => tag.uuid),
+            }).then((response) => {
+                this.$emit("emailSubmitted");
+                this.closePopover();
+            }).catch((error) => {
+                console.error("Error submitting email:", error);
+            });
         },
     },
 
     mounted() {
         this.loadGeneralAdvisor();
         this.loadCalendarActionTags();
+
+        this.currentTemplate = this.template;
+        this.selectedTags = this.tags;
     },
 };
 </script>

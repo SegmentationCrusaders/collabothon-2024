@@ -1,6 +1,6 @@
 <template>
-    <CalendarActionIdeaCarousel @onCreate="createEmailFromTemplate" />
-    
+    <CalendarActionIdeaCarousel @onCreate="showScheduleConsultationsPopover" />
+
     <div class="grid grid-cols-12 gap-4 p-4">
         <!-- Calendar Island in the first section -->
         <div class="col-span-12 p-6 bg-white commerzbank-shadow lg:col-span-7 border rounded-lg commerzbank-border">
@@ -15,7 +15,7 @@
         <div class="flex flex-col col-span-12 space-y-4 lg:col-span-5">
             <!-- Schedule Consultations -->
             <ScheduleConsultations
-                @show-schedule-consultations-popover="showScheduleConsultationsPopover"
+                @show-schedule-consultations-popover="showScheduleConsultationsPopover('consultation')"
             />
 
             <!-- Urgent CalendarActions Section -->
@@ -31,10 +31,7 @@
 
             <!-- Proposed CalendarActions Section -->
             <div class="flex-1 p-3 overflow-y-auto bg-gray-100 commerzbank-shadow max-h-96 border rounded-lg commerzbank-border">
-                <div class="sticky top-0 bg-gray-100">
-                    <h2 class="mb-4 text-lg font-bold text-black">Proposed Actions</h2>
-                </div>
-                <span v-if="isLoadingProposedActions">Loading proposed actions...</span>
+                <h2 class="mb-4 text-lg font-bold text-black">Proposed Actions</h2>
                 <CalendarActionList
                     v-for="proposed in proposedActions"
                     @calendar-action-click="handleCalendarActionClick"
@@ -59,6 +56,8 @@
             <ScheduleConsultationsPopover
                 v-if="shouldDisplayScheduleConsultationsPopover"
                 :template="template"
+                :tags="tags"
+                @emailSubmitted="loadUrgentCalendarActions"
                 @close="closePopover"
             />
         </Transition>
@@ -233,6 +232,7 @@ export default {
 
         loadUrgentCalendarActions() {
             this.isLoadingUrgentCalendarActions = true;
+            console.log("Loading urgent calendar actions...");
 
             axios
                 .get("/calendar-actions", {})
@@ -260,13 +260,15 @@ export default {
         },
 
         handleCalendarActionClick(calendarActionUuid) {
-            const calendarAction = this.todoEvents.find((todo) => todo.uuid === calendarActionUuid);
+            const proposed = this.todoEvents.find((todo) => todo.uuid === calendarActionUuid);
 
-            if (calendarAction) {
-                this.selectedCalendarAction = calendarAction;
+            if (proposed) {
+                this.selectedCalendarAction = proposed;
                 console.log("Selected CalendarAction:", this.selectedCalendarAction);
             } else {
-                console.error("Event not found in the map!");
+                const proposed = this.proposedActions.find((todo) => todo.uuid === calendarActionUuid);
+                
+                this.showScheduleConsultationsPopover(proposed.title, proposed.tags);
             }
         },
 
@@ -293,8 +295,10 @@ export default {
             this.shouldDisplayScheduleConsultationsPopover = false;
         },
 
-        showScheduleConsultationsPopover() {
-            this.template = 'consultation';
+        showScheduleConsultationsPopover(template, tags = []) {
+            this.template = template;
+            this.tags = tags;
+            console.log(this.tags)
 
             this.shouldDisplayScheduleConsultationsPopover = true;
         },
@@ -309,12 +313,6 @@ export default {
             });
         },
 
-        createEmailFromTemplate(template) {
-            this.template = template;
-            console.log(template)
-
-            this.showScheduleConsultationsPopover();
-        }
     },
 
     mounted() {
