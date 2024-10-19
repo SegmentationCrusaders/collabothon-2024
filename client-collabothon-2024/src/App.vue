@@ -77,7 +77,7 @@
             </div>
 
             <div v-if="$root.loggedUser">
-                <div v-if="$root.loggedUser?.role?.name == 'CEO' || $root.loggedUser?.role?.name == 'Controller' || $root.loggedUser?.role?.name == 'Commerzbank Admin'">
+                <div v-if="$root.loggedUser?.role?.name == 'CEO' || $root.loggedUser?.role?.name == 'Controller' || $root.loggedUser?.role?.name == 'Commerzbank admin'">
                     <CalendarActionIdeaCarousel @onCreate="showScheduleConsultationsPopover" />
                 </div>
             </div>
