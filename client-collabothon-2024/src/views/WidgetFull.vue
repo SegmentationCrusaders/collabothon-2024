@@ -301,8 +301,6 @@ export default {
                 const start = this.selectedCalendarViewRangeStart;
                 const end = this.selectedCalendarViewRangeEnd;
 
-                console.log("Filtering by date range:", start, end);
-
                 filtered = filtered.filter((calendarAction) => {
                     const calendarEvents = calendarAction.calendar_events || [];
 
@@ -461,11 +459,6 @@ export default {
                     console.error("Error loading logged user:", error);
                 });
         },
-    },
-
-    watch: {
-        selectedStatus: "filterUrgentCalendarActions",
-        selectedTags: "filterUrgentCalendarActions",
     },
 
     watch: {
