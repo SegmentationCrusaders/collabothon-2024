@@ -1,35 +1,49 @@
 <template>
-    <div>
-        <div @click="handleEventClick" class="p-4 cursor-pointer hover:bg-gray-200">
+    <div @click="handleEventClick" class="p-4 cursor-pointer hover:bg-gray-200">
+        <div class="flex items-center justify-between">
             <h4 class="text-lg font-semibold">{{ action.title }}</h4>
-            <p class="text-gray-600">{{ action.description }}</p>
-            <div class="flex flex-wrap">
-                <span
-                    v-for="tag in action.tags"
-                    :key="tag.uuid"
-                    class="px-2 py-1 mr-1 text-green-800 bg-green-100 rounded-full"
-                >
-                    {{ tag.tag }}
-                </span>
-            </div>
+
             <div v-if="action.status">
-                <p class="mt-2 text-sm text-gray-500">Status: {{ action.status?.name }}</p>
+                <i
+                    v-if="action.status.name === 'CREATED'"
+                    class="text-yellow-500 fas fa-file-alt"
+                ></i>
+
+                <i
+                    v-if="action.status.name === 'AWAITING'"
+                    class="text-blue-500 fas fa-hourglass-half"
+                ></i>
+
+                <i
+                    v-if="action.status.name === 'COMPLETED'"
+                    class="text-green-500 fas fa-check-circle"
+                ></i>
+
+                <i
+                    v-if="action.status.name === 'CANCELLED'"
+                    class="text-red-500 fas fa-times-circle"
+                ></i>
+
+                <span class="ml-2 text-sm text-gray-500">{{ action.status?.name }}</span>
             </div>
-            <!-- <div class="mt-4">
-                <h5 class="font-medium">Calendar Events:</h5>
-                <ul>
-                    <li
-                        v-for="event in action.calendar_events"
-                        :key="event.uuid"
-                        class="p-2 mb-2 border rounded-md bg-gray-50"
-                    >
-                        <h6 class="font-semibold">{{ event.title }}</h6>
-                        <p>Location: {{ event.location }}</p>
-                        <p>Start: {{ event.start_date }}</p>
-                        <p>End: {{ event.end_date }}</p>
-                    </li>
-                </ul>
-            </div> -->
+        </div>
+        <p class="mt-1 text-gray-600">{{ action.description }}</p>
+
+        <!-- Tags with icons -->
+        <div class="flex flex-wrap mt-2">
+            <span
+                v-for="tag in action.tags"
+                :key="tag.uuid"
+                class="flex items-center px-2 py-1 mr-1 text-green-800 bg-green-100 rounded-full"
+            >
+                <i class="mr-1 fas fa-tag"></i>
+                {{ tag.tag }}
+            </span>
+        </div>
+
+        <div class="flex items-center mt-2 text-sm text-gray-500">
+            <span>View Details</span>
+            <i class="ml-2 fas fa-chevron-right"></i>
         </div>
     </div>
 </template>

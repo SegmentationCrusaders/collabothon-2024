@@ -1,11 +1,12 @@
 <template>
     <div class="grid grid-cols-12 gap-4 p-8">
         <!-- Calendar Island in the first section -->
-        <div class="col-span-12 p-6 bg-white commerzbank-shadow lg:col-span-7 border rounded-lg commerzbank-border">
+        <div class="col-span-12 p-6 bg-white border rounded-lg commerzbank-shadow lg:col-span-7 commerzbank-border">
             <h2 class="mb-4 text-xl font-bold text-black">Calendar</h2>
             <CalendarComponent
                 :events="allCalendarEvents"
                 @calendar-event-click="handleCalendarEventClick"
+                @calendar-view-range-change="handleCalendarViewRangeChange"
             />
         </div>
 
@@ -16,19 +17,67 @@
                 @show-schedule-consultations-popover="showScheduleConsultationsPopover('consultation')"
             />
 
-            <!-- Urgent CalendarActions Section -->
-            <div class="flex-1 p-3 overflow-y-auto bg-gray-100 commerzbank-shadow max-h-96 border rounded-lg commerzbank-border">
-                <h2 class="mb-4 text-lg font-bold text-black">Urgent Actions</h2>
-                <CalendarActionList
-                    v-for="todo in todoEvents"
-                    :key="todo.id"
-                    @calendar-action-click="handleCalendarActionClick"
-                    :action="todo"
-                />
+            <!-- Urgent CalendarActions Section with Filter -->
+            <div class="flex-1 p-3 overflow-y-auto bg-gray-100 border rounded-lg commerzbank-shadow max-h-96 commerzbank-border">
+                <!-- Filter Bar -->
+                <div class="flex items-center mb-4 space-x-2">
+                    <!-- Status Filter -->
+                    <div class="w-1/2">
+                        <label for="statusFilter" class="block mb-1 text-sm font-bold text-gray-700"
+                            >Filter by Status</label
+                        >
+                        <Multiselect
+                            v-model="selectedStatus"
+                            :options="statusOptions"
+                            placeholder="Select Status"
+                            label="name"
+                            track-by="name"
+                            class="w-full"
+                            :close-on-select="true"
+                            :clear-on-select="true"
+                            :allow-empty="true"
+                        />
+                    </div>
+
+                    <!-- Tag Filter -->
+                    <div class="w-1/2">
+                        <label for="tagFilter" class="block mb-1 text-sm font-bold text-gray-700"
+                            >Filter by Tags</label
+                        >
+                        <Multiselect
+                            v-model="selectedTags"
+                            :options="tagOptions"
+                            placeholder="Select Tags"
+                            label="tag"
+                            track-by="uuid"
+                            multiple
+                            class="w-full"
+                            :close-on-select="false"
+                            :clear-on-select="false"
+                            hide-selected
+                            :allow-empty="true"
+                            tag-placeholder="Add this as a tag"
+                        />
+                    </div>
+                </div>
+
+                <!-- Urgent CalendarActions List -->
+                <div class="flex-1 overflow-y-auto">
+                    <h2 class="mb-4 text-lg font-bold text-black">Urgent Actions</h2>
+                    <template v-if="filteredUrgentCalendarActions.length === 0">
+                        <p class="text-gray-500">No urgent actions available.</p>
+                    </template>
+                    <CalendarActionList
+                        v-for="todo in filteredUrgentCalendarActions"
+                        :key="todo.uuid"
+                        @calendar-action-click="handleCalendarActionClick"
+                        :action="todo"
+                    />
+                </div>
             </div>
 
             <div v-if="$root.loggedUser">
-                <div v-if="$root.loggedUser.role.name == 'CEO' || $root.loggedUser.role.name == 'Controller'">
+                <div v-if="$root.loggedUser?.role?.name == 'CEO' || $root.loggedUser?.role?.name == 'Controller'">
                     <CalendarActionIdeaCarousel @onCreate="showScheduleConsultationsPopover" />
                 </div>
             </div>
@@ -100,6 +149,8 @@ import CalendarActionList from "./components/CalendarActionListComponent.vue";
 import CalendarActionPopover from "./components/popovers/CalendarActionPopover.vue";
 import ScheduleConsultationsPopover from "./components/popovers/ScheduleConsultationsPopover.vue";
 import CalendarActionIdeaCarousel from "./components/CalendarActionIdeaCarousel.vue";
+import Multiselect from "vue-multiselect";
+import "vue-multiselect/dist/vue-multiselect.min.css";
 
 export default {
     components: {
@@ -109,11 +160,13 @@ export default {
         CalendarActionPopover,
         ScheduleConsultationsPopover,
         CalendarActionIdeaCarousel,
+        Multiselect,
     },
 
     data() {
         return {
             todoEvents: [],
+            filteredUrgentCalendarActions: [],
             proposedEvents: [],
             allCalendarEvents: [],
             template: 'consultation',
@@ -133,6 +186,21 @@ export default {
             selectedCalendarAction: null,
             calendarEventToCalendarActionMap: {}, // Map to store the relationship between calendar events and actions
             shouldDisplayScheduleConsultationsPopover: false,
+
+            selectedTags: [],
+            selectedStatus: null,
+
+            statusOptions: [
+                { name: "CREATED" },
+                { name: "AWAITING" },
+                { name: "COMPLETED" },
+                { name: "CANCELLED" },
+            ],
+
+            tagOptions: [],
+
+            selectedCalendarViewRangeStart: null,
+            selectedCalendarViewRangeEnd: null,
         };
     },
 
@@ -180,29 +248,92 @@ export default {
             window.location.reload();
         },
 
+        handleCalendarViewRangeChange(range) {
+            if (!range || !range.start || !range.end) return;
+
+            const newRange = { start: range.start, end: range.end };
+            const currentRangeString = JSON.stringify(this.selectedCalendarViewRange);
+            const newRangeString = JSON.stringify(newRange);
+
+            if (currentRangeString === newRangeString) {
+                return; // Do nothing if the range is the same
+            }
+
+            this.selectedCalendarViewRangeStart = range.start;
+            this.selectedCalendarViewRangeEnd = range.end;
+
+            this.filterUrgentCalendarActions();
+        },
+
+        filterUrgentCalendarActions() {
+            console.log("Filtering urgent calendar actions...");
+
+            let filtered = this.todoEvents;
+
+            if (this.selectedStatus && this.selectedStatus.name) {
+                filtered = filtered.filter(
+                    (event) => event.status.name === this.selectedStatus.name,
+                );
+            }
+
+            if (this.selectedTags.length > 0) {
+                filtered = filtered.filter((event) =>
+                    this.selectedTags.every((selectedTag) =>
+                        event.tags.some((tag) => tag.tag === selectedTag.tag),
+                    ),
+                );
+            }
+
+            // Filter by the selected date range
+            if (this.selectedCalendarViewRangeStart && this.selectedCalendarViewRangeEnd) {
+                const start = this.selectedCalendarViewRangeStart;
+                const end = this.selectedCalendarViewRangeEnd;
+
+                console.log("Filtering by date range:", start, end);
+
+                filtered = filtered.filter((calendarAction) => {
+                    const calendarEvents = calendarAction.calendar_events || [];
+
+                    const isInRange = calendarEvents.some((event) => {
+                        const eventStart = new Date(event.start_date);
+                        const eventEnd = new Date(event.end_date);
+
+                        // Check if the CalendarEvent falls within the selected range
+                        return (
+                            (eventStart >= start && eventStart <= end) ||
+                            (eventEnd >= start && eventEnd <= end) ||
+                            (eventStart <= start && eventEnd >= end) // The event covers the range
+                        );
+                    });
+
+                    // Return true if any calendarEvent is in range or if there are no associated calendar_events
+                    return isInRange || calendarEvents.length === 0;
+                });
+            }
+
+            this.filteredUrgentCalendarActions = filtered;
+            this.parseFullCalendarEvents();
+        },
+
         parseFullCalendarEvents() {
             const events = [];
 
-            console.log("Todo Events:", this.todoEvents);
-
-            this.todoEvents.forEach((todo) => {
-                if (todo.calendar_events) {
-                    todo.calendar_events.forEach((calendarEvent) => {
+            this.filteredUrgentCalendarActions.forEach((calendarAction) => {
+                if (calendarAction.calendar_events) {
+                    calendarAction.calendar_events.forEach((calendarEvent) => {
                         events.push({
                             id: calendarEvent.uuid,
                             title: calendarEvent.title,
                             start: calendarEvent.start_date,
                             end: calendarEvent.end_date,
                             extendedProps: {
-                                tags: todo.tags || [],
+                                tags: calendarEvent.tags || [],
                                 originalEvent: calendarEvent,
                             },
                         });
                     });
                 }
             });
-
-            console.log("Full Calendar Events:", events);
 
             this.allCalendarEvents = events;
         },
@@ -233,12 +364,24 @@ export default {
                     this.todoEvents = response.data.data;
 
                     this.buildCalendarEventToCalendarActionMap();
+                    this.filterUrgentCalendarActions();
                 })
                 .catch((error) => {
                     console.error("Error loading proposed actions:", error);
                 })
                 .finally(() => {
                     this.isLoadingUrgentCalendarActions = false;
+                });
+        },
+
+        loadAvailableTags() {
+            axios
+                .get("/calendar-action-tags", {})
+                .then((response) => {
+                    this.tagOptions = response.data.data;
+                })
+                .catch((error) => {
+                    console.error("Error loading CalendarAction Tags:", error);
                 });
         },
 
@@ -253,11 +396,10 @@ export default {
         },
 
         handleCalendarActionClick(calendarActionUuid) {
-            const proposed = this.todoEvents.find((todo) => todo.uuid === calendarActionUuid);
+            const calendarAction = this.todoEvents.find((todo) => todo.uuid === calendarActionUuid);
 
-            if (proposed) {
-                this.selectedCalendarAction = proposed;
-                console.log("Selected CalendarAction:", this.selectedCalendarAction);
+            if (calendarAction) {
+                this.selectedCalendarAction = calendarAction;
             } else {
                 const proposed = this.proposedActions.find((todo) => todo.uuid === calendarActionUuid);
                 
@@ -307,6 +449,16 @@ export default {
 
     },
 
+    watch: {
+        selectedStatus: "filterUrgentCalendarActions",
+        selectedTags: "filterUrgentCalendarActions",
+    },
+
+    watch: {
+        selectedStatus: "filterUrgentCalendarActions",
+        selectedTags: "filterUrgentCalendarActions",
+    },
+
     mounted() {
         if (localStorage.getItem("bearer_token")) {
             window.axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem(
@@ -320,6 +472,7 @@ export default {
 
         this.loadProposedActions();
         this.loadUrgentCalendarActions();
+        this.loadAvailableTags();
 
         this.buildCalendarEventToCalendarActionMap();
     },
