@@ -17,7 +17,7 @@
             />
 
             <!-- Urgent CalendarActions Section -->
-            <div class="flex-1 p-3 overflow-y-auto bg-gray-100 rounded-lg shadow-md">
+            <div class="flex-1 p-3 overflow-y-auto bg-gray-100 rounded-lg shadow-md max-h-96">
                 <h2 class="mb-4 text-lg font-bold text-black">Urgent Actions</h2>
                 <CalendarActionList
                     v-for="todo in todoEvents"
@@ -28,11 +28,11 @@
             </div>
 
             <!-- Proposed CalendarActions Section -->
-            <div class="flex-1 px-2 overflow-y-auto bg-gray-100 rounded-lg shadow-md">
-                <div class="sticky top-0 py-2 bg-gray-100">
+            <div class="flex-1 p-3 overflow-y-auto bg-gray-100 rounded-lg shadow-md max-h-96">
+                <div class="sticky top-0 bg-gray-100">
                     <h2 class="mb-4 text-lg font-bold text-black">Proposed Actions</h2>
                 </div>
-                <span v-if="isLoadingProposedActions"> Loading proposed actions... </span>
+                <span v-if="isLoadingProposedActions">Loading proposed actions...</span>
                 <CalendarActionList
                     v-for="proposed in proposedActions"
                     @calendar-action-click="handleCalendarActionClick"
