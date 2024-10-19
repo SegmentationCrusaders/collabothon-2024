@@ -101,18 +101,31 @@
                         </div>
                     </li>
                 </ul>
-              <fieldset>
-                <legend>Location:</legend>
-                <input ref="location" id="calendar_event_location" type="text"/>
-              </fieldset>
-              <fieldset>
-                <legend>From:</legend>
-                <input ref="from_date" id="calendar_event_start_date" type="datetime-local"><br/>
-              </fieldset>
-              <fieldset>
-                <legend>To:</legend>
-                <input ref="to_date" id="calendar_event_end_date" type="datetime-local"><br/>
-              </fieldset>
+              <hr class="mb-4"/>
+              <div class="md:flex md:items-center mb-2">
+                <div class="md:w-1/3">
+                  <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                    Location:
+                  </label>
+                </div>
+                <div class="md:w-2/3">
+                  <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" ref="location" id="calendar_event_location" type="text" placeholder="Enter meeting location">
+                </div>
+              </div>
+              <div class="flex flex-wrap -mx-3 mb-2">
+                <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                  <label class="block tracking-wide text-gray-700 text-xs font-bold mb-2">
+                    From:
+                  </label>
+                  <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" ref="from_date" id="calendar_event_start_date" type="datetime-local" placeholder="From date">
+                </div>
+                <div class="w-full md:w-1/2 px-3">
+                  <label class="block tracking-wide text-gray-700 text-xs font-bold mb-2">
+                    To:
+                  </label>
+                  <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" ref="to_date" id="calendar_event_end_date" type="datetime-local" placeholder="To date">
+                </div>
+              </div>
                 <button
                     @click="createNewDate(action.uuid)"
                     class="w-full p-2 mt-4 text-white bg-blue-500 rounded"
@@ -187,7 +200,8 @@ export default {
             axios.post(`/calendar-event-accept/${event.uuid}`)
               .then((response) => {
                  console.debug('[Calendar event] Accepted event with id', response);
-                 //location.reload();
+                 alert('Event accepted');
+                 location.reload();
                 // TODO: Reload component
               })
               .catch((error) => {
@@ -200,6 +214,7 @@ export default {
           axios.post(`/calendar-event-decline/${event.uuid}`)
               .then((response) => {
                   console.debug('[Calendar event] Declined event with id', response);
+                  alert('Event declined');
                   location.reload();
                   // TODO: Reload component
               })
@@ -220,6 +235,7 @@ export default {
             })
                 .then((response) => {
                     console.debug('[Calendar event] New date created', response);
+                    alert('New event created');
                     location.reload();
                 })
                 .catch((error) => {
