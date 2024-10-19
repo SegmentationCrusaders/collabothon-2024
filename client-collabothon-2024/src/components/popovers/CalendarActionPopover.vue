@@ -47,7 +47,7 @@
                 <h3 class="mb-2 text-lg font-bold">Proposed Date</h3>
                 <ul class="pl-5 text-gray-800 list-disc list-inside">
                     <li
-                        v-for="event in action.events"
+                        v-for="event in action.calendar_events"
                         :key="event.id"
                         class="flex items-center justify-between p-2 rounded"
                     >

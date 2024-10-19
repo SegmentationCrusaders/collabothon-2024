@@ -38,8 +38,8 @@
                             v-model="selectedTags"
                             :options="availableTags"
                             placeholder="Select tags"
-                            label="name"
-                            track-by="id"
+                            label="tag"
+                            track-by="uuid"
                             multiple
                             :close-on-select="false"
                             clear-on-select="false"
@@ -70,29 +70,7 @@ export default {
     },
     data() {
         return {
-            availableTags: [
-                { id: 1, name: "Meeting" },
-                { id: 2, name: "Consultation" },
-                { id: 3, name: "Webinar" },
-                { id: 4, name: "Social Media" },
-                { id: 5, name: "Product Review" },
-                { id: 6, name: "Training" },
-                { id: 7, name: "Team Meeting" },
-                { id: 8, name: "Urgent" },
-                { id: 9, name: "Follow-up" },
-                { id: 10, name: "Strategy" },
-                { id: 11, name: "Brainstorming" },
-                { id: 12, name: "Client Call" },
-                { id: 13, name: "On-Site" },
-                { id: 14, name: "Remote" },
-                { id: 15, name: "Demo" },
-                { id: 16, name: "Marketing" },
-                { id: 17, name: "Sales" },
-                { id: 18, name: "Deadline" },
-                { id: 19, name: "Feedback" },
-                { id: 20, name: "Planning" },
-            ],
-
+            availableTags: [],
             selectedTags: [],
         };
     },
@@ -102,6 +80,7 @@ export default {
             console.log("Sending consultation with tags:");
         },
         closePopover() {
+            this.selectedTags = [];
             this.$emit("close");
         },
         closePopoverOnOutsideClick(event) {
@@ -109,6 +88,18 @@ export default {
                 this.closePopover();
             }
         },
+    },
+
+    mounted() {
+        axios
+            .get("/calendar-action-tags", {})
+            .then((response) => {
+                console.log;
+                this.availableTags = response.data.data;
+            })
+            .catch((error) => {
+                console.error("Error loading Calendar Action Tags:", error);
+            });
     },
 };
 </script>

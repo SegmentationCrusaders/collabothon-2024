@@ -4,7 +4,7 @@
         <div class="col-span-12 p-6 bg-white rounded-lg shadow-md lg:col-span-7">
             <h2 class="mb-4 text-xl font-bold text-black">Calendar</h2>
             <CalendarComponent
-                :events="fullCalendarEvents"
+                :events="allCalendarEvents"
                 @calendar-event-click="handleCalendarEventClick"
             />
         </div>
@@ -18,11 +18,11 @@
 
             <!-- Urgent CalendarActions Section -->
             <div class="flex-1 p-3 overflow-y-auto bg-gray-100 rounded-lg shadow-md">
-                <h2 class="mb-4 text-lg font-bold text-black">To-Do Events</h2>
+                <h2 class="mb-4 text-lg font-bold text-black">Urgent Actions</h2>
                 <CalendarActionList
                     v-for="todo in todoEvents"
                     :key="todo.id"
-                    @calendar-action-click="handleCalendarEventClick"
+                    @calendar-action-click="handleCalendarActionClick"
                     :action="todo"
                 />
             </div>
@@ -32,12 +32,10 @@
                 <div class="sticky top-0 py-2 bg-gray-100">
                     <h2 class="mb-4 text-lg font-bold text-black">Proposed Actions</h2>
                 </div>
-                <span v-if="isLoadingProposedActions">
-                    Loading proposed actions...
-                </span>
+                <span v-if="isLoadingProposedActions"> Loading proposed actions... </span>
                 <CalendarActionList
                     v-for="proposed in proposedActions"
-                    @calendar-action-click="handleCalendarEventClick"
+                    @calendar-action-click="handleCalendarActionClick"
                     :key="proposed.id"
                     :action="proposed"
                 />
@@ -64,29 +62,34 @@
     </div>
 
     <div class="flex p-4 space-x-4">
-        <button 
-            v-on:click="switchToCEO" 
-            class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700">
+        <button
+            v-on:click="switchToCEO"
+            class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
+        >
             Switch to CEO
         </button>
-        <button 
-            v-on:click="switchToController" 
-            class="px-4 py-2 font-bold text-white bg-green-500 rounded hover:bg-green-700">
+        <button
+            v-on:click="switchToController"
+            class="px-4 py-2 font-bold text-white bg-green-500 rounded hover:bg-green-700"
+        >
             Switch to Controller
         </button>
-        <button 
-            v-on:click="switchToCashManagementSpecialist" 
-            class="px-4 py-2 font-bold text-white bg-yellow-500 rounded hover:bg-yellow-700">
+        <button
+            v-on:click="switchToCashManagementSpecialist"
+            class="px-4 py-2 font-bold text-white bg-yellow-500 rounded hover:bg-yellow-700"
+        >
             Switch to Cash Management Specialist
-        </button>   
-        <button 
-            v-on:click="switchToAccountant" 
-            class="px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700">
+        </button>
+        <button
+            v-on:click="switchToAccountant"
+            class="px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700"
+        >
             Switch to Accountant
         </button>
-        <button 
-            v-on:click="switchToCommerzbankAdmin" 
-            class="px-4 py-2 font-bold text-white bg-purple-500 rounded hover:bg-purple-700">
+        <button
+            v-on:click="switchToCommerzbankAdmin"
+            class="px-4 py-2 font-bold text-white bg-purple-500 rounded hover:bg-purple-700"
+        >
             Switch to Commerzbank Admin
         </button>
         <div class="p-4">
@@ -113,111 +116,18 @@ export default {
 
     data() {
         return {
-            todoEvents: [
-                {
-                    id: 1,
-                    title: "Meeting with John Doe Investment",
-                    tags: ["meeting", "consultation"],
-                    events: [
-                        {
-                            id: 1,
-                            title: "In Office 7",
-                            start: "2024-10-18T10:00:00",
-                            end: "2024-10-18T11:30:00",
-                        },
-                        {
-                            id: 2,
-                            title: "In Office 8",
-                            start: "2024-10-25T14:00:00",
-                            end: "2024-10-18T15:30:00",
-                        },
-                    ],
-                },
-            ],
-            proposedEvents: [
-                {
-                    id: 1,
-                    title: "Enhance presence in social media",
-                    tags: ["webinar", "social media"],
-                    events: [
-                        {
-                            id: 1,
-                            title: "Office 12 Strasse 5",
-                            start: "2024-10-22T09:00:00",
-                            end: "2024-10-22T10:00:00",
-                        },
-                        {
-                            id: 2,
-                            title: "Office 17 Strasse 2",
-                            start: "2024-10-27T13:00:00",
-                            end: "2024-10-27T14:30:00",
-                        },
-                    ],
-                },
-                {
-                    id: 2,
-                    title: "Test new product features",
-                    tags: ["webinar", "social media"],
-                    events: [
-                        {
-                            id: 3,
-                            title: "312",
-                            start: "2024-10-22T09:00:00",
-                            end: "2024-10-22T10:00:00",
-                        },
-                        {
-                            id: 4,
-                            title: "123",
-                            start: "2024-10-27T13:00:00",
-                            end: "2024-10-27T14:30:00",
-                        },
-                    ],
-                },
-                {
-                    id: 3,
-                    title: "Test new product features",
-                    tags: ["webinar", "social media"],
-                    events: [
-                        {
-                            id: 4,
-                            title: "312",
-                            start: "2024-10-22T09:00:00",
-                            end: "2024-10-22T10:00:00",
-                        },
-                        {
-                            id: 5,
-                            title: "123",
-                            start: "2024-10-27T13:00:00",
-                            end: "2024-10-27T14:30:00",
-                        },
-                    ],
-                },
-                {
-                    id: 4,
-                    title: "Test new product features",
-                    tags: ["webinar", "social media"],
-                    events: [
-                        {
-                            id: 5,
-                            title: "312",
-                            start: "2024-10-22T09:00:00",
-                            end: "2024-10-22T10:00:00",
-                        },
-                        {
-                            id: 6,
-                            title: "123",
-                            start: "2024-10-27T13:00:00",
-                            end: "2024-10-27T14:30:00",
-                        },
-                    ],
-                },
-            ],
+            todoEvents: [],
+            proposedEvents: [],
+            allCalendarEvents: [],
+
             roles: {
-                '2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2': 'CEO',
-                'koP7tEvVel3gfG0gWOjG3bTgrzo1ubzbfsD5vKll2mjVM263aEGPHhIZSIMWNdy1': 'Controller',
-                'Yk7lYm6LaZwpeDW4yJucFVJ5UaqfWbL9Hc9t5SjmgmZXs03HWZQnaBFErTANrFgm': 'Cash Management Specialist',
-                'BB4I3gN8OJZPFfVt4fWuYUYxhvnB0jS6feg0KQCx0u33EIl6aCgbx7qZ1VJOxsm0': 'Accountant',
-                's0G3UTt79wsL4wgIHHBea7ptulrXpCvxIOYRXBdM5rOIbIdasOhAaKRWSJQG1XrU': 'Commerzbank Admin',
+                "2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2": "CEO",
+                koP7tEvVel3gfG0gWOjG3bTgrzo1ubzbfsD5vKll2mjVM263aEGPHhIZSIMWNdy1: "Controller",
+                Yk7lYm6LaZwpeDW4yJucFVJ5UaqfWbL9Hc9t5SjmgmZXs03HWZQnaBFErTANrFgm:
+                    "Cash Management Specialist",
+                BB4I3gN8OJZPFfVt4fWuYUYxhvnB0jS6feg0KQCx0u33EIl6aCgbx7qZ1VJOxsm0: "Accountant",
+                s0G3UTt79wsL4wgIHHBea7ptulrXpCvxIOYRXBdM5rOIbIdasOhAaKRWSJQG1XrU:
+                    "Commerzbank Admin",
             },
             isLoadingProposedActions: false,
             proposedActions: [],
@@ -230,109 +140,126 @@ export default {
 
     computed: {
         currentRole() {
-            const token = localStorage.getItem('bearer_token');
-        
-            return this.roles[token] || 'Unknown';
+            const token = localStorage.getItem("bearer_token");
+
+            return this.roles[token] || "Unknown";
+        },
+    },
+
+    methods: {
+        switchToCEO() {
+            let token = "2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2";
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("bearer_token", token);
+            window.location.reload();
         },
 
-        fullCalendarEvents() {
+        switchToController() {
+            let token = "koP7tEvVel3gfG0gWOjG3bTgrzo1ubzbfsD5vKll2mjVM263aEGPHhIZSIMWNdy1";
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("bearer_token", token);
+            window.location.reload();
+        },
+
+        switchToCashManagementSpecialist() {
+            let token = "Yk7lYm6LaZwpeDW4yJucFVJ5UaqfWbL9Hc9t5SjmgmZXs03HWZQnaBFErTANrFgm";
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("bearer_token", token);
+            window.location.reload();
+        },
+
+        switchToAccountant() {
+            let token = "BB4I3gN8OJZPFfVt4fWuYUYxhvnB0jS6feg0KQCx0u33EIl6aCgbx7qZ1VJOxsm0";
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("bearer_token", token);
+            window.location.reload();
+        },
+
+        switchToCommerzbankAdmin() {
+            let token = "s0G3UTt79wsL4wgIHHBea7ptulrXpCvxIOYRXBdM5rOIbIdasOhAaKRWSJQG1XrU";
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("bearer_token", token);
+            window.location.reload();
+        },
+
+        parseFullCalendarEvents() {
             const events = [];
 
-            this.todoEvents.forEach((todo) => {
-                todo.events.forEach((event) => {
-                    events.push({
-                        id: event.id,
-                        title: todo.title,
-                        start: event.start,
-                        end: event.end,
-                        extendedProps: {
-                            tags: todo.tags,
-                            originalEvent: event,
-                            eventType: "todo", // Indicate the type of event
-                        },
-                    });
-                });
-            });
+            console.log("Todo Events:", this.todoEvents);
 
-            this.proposedActions.forEach((proposed) => {
-                if (proposed.events) {
-                    proposed.events.forEach((event) => {
+            this.todoEvents.forEach((todo) => {
+                console.log("todo", todo);
+                if (todo.calendar_events) {
+                    console.log("Calendar Events:", todo.calendar_events);
+                    todo.calendar_events.forEach((calendarEvent) => {
                         events.push({
-                            id: event.id,
-                            title: proposed.title,
-                            start: event.start,
-                            end: event.end,
+                            id: calendarEvent.uuid,
+                            title: calendarEvent.title,
+                            start: calendarEvent.start_date,
+                            end: calendarEvent.end_date,
                             extendedProps: {
-                                tags: proposed.tags,
-                                originalEvent: event,
-                                eventType: "proposed", // Indicate the type of event
+                                tags: todo.tags || [],
+                                originalEvent: calendarEvent,
                             },
                         });
                     });
                 }
             });
 
-            return events;
-        },
-    },
+            console.log("Full Calendar Events:", events);
 
-    methods: {
-        switchToCEO() {
-            let token = '2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2';
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            localStorage.setItem('bearer_token', token);
-            window.location.reload();
-        },
-        
-        switchToController() {
-            let token = 'koP7tEvVel3gfG0gWOjG3bTgrzo1ubzbfsD5vKll2mjVM263aEGPHhIZSIMWNdy1';
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            localStorage.setItem('bearer_token', token);
-            window.location.reload();
-        },
-
-        switchToCashManagementSpecialist() {
-            let token = 'Yk7lYm6LaZwpeDW4yJucFVJ5UaqfWbL9Hc9t5SjmgmZXs03HWZQnaBFErTANrFgm';
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            localStorage.setItem('bearer_token', token);
-            window.location.reload();
-        },
-
-        switchToAccountant() {
-            let token = 'BB4I3gN8OJZPFfVt4fWuYUYxhvnB0jS6feg0KQCx0u33EIl6aCgbx7qZ1VJOxsm0';
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            localStorage.setItem('bearer_token', token);
-            window.location.reload();
-        },
-        
-        switchToCommerzbankAdmin() {
-            let token = 's0G3UTt79wsL4wgIHHBea7ptulrXpCvxIOYRXBdM5rOIbIdasOhAaKRWSJQG1XrU';
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            localStorage.setItem('bearer_token', token);
-            window.location.reload();
+            this.allCalendarEvents = events;
         },
 
         loadProposedActions() {
             this.isLoadingProposedActions = true;
 
-            axios.get('/calendar-action-templates', {
-
-            }).then((response) => {
-                this.proposedActions = response.data.data;
-
-                this.buildCalendarEventToCalendarActionMap();
-            }).catch((error) => {
-                console.error("Error loading proposed actions:", error);
-            }).finally(() => {
-                this.isLoadingProposedActions = false;
-            });
+            axios
+                .get("/calendar-action-templates", {})
+                .then((response) => {
+                    this.proposedActions = response.data.data;
+                })
+                .catch((error) => {
+                    console.error("Error loading proposed actions:", error);
+                })
+                .finally(() => {
+                    this.isLoadingProposedActions = false;
+                });
         },
 
-        handleCalendarEventClick(eventId) {
-            const calendarAction = this.calendarEventToCalendarActionMap[eventId];
+        loadUrgentCalendarActions() {
+            this.isLoadingUrgentCalendarActions = true;
+
+            axios
+                .get("/calendar-actions", {})
+                .then((response) => {
+                    this.todoEvents = response.data.data;
+
+                    this.buildCalendarEventToCalendarActionMap();
+                })
+                .catch((error) => {
+                    console.error("Error loading proposed actions:", error);
+                })
+                .finally(() => {
+                    this.isLoadingUrgentCalendarActions = false;
+                });
+        },
+
+        handleCalendarEventClick(eventUuid) {
+            const calendarAction = this.calendarEventToCalendarActionMap[eventUuid];
 
             if (calendarAction) {
                 this.selectedCalendarAction = calendarAction.parentCalendarAction;
+            } else {
+                console.error("Event not found in the map!");
+            }
+        },
+
+        handleCalendarActionClick(calendarActionUuid) {
+            const calendarAction = this.todoEvents.find((todo) => todo.uuid === calendarActionUuid);
+
+            if (calendarAction) {
+                this.selectedCalendarAction = calendarAction;
                 console.log("Selected CalendarAction:", this.selectedCalendarAction);
             } else {
                 console.error("Event not found in the map!");
@@ -347,24 +274,14 @@ export default {
          */
         buildCalendarEventToCalendarActionMap() {
             this.todoEvents.forEach((todo) => {
-                todo.events.forEach((event) => {
-                    this.calendarEventToCalendarActionMap[event.id] = {
+                todo.calendar_events.forEach((event) => {
+                    this.calendarEventToCalendarActionMap[event.uuid] = {
                         parentCalendarAction: todo,
                     };
                 });
             });
 
-            this.proposedActions.forEach((proposed) => {
-                if (proposed.events) {
-                    proposed.events.forEach((event) => {
-                        this.calendarEventToCalendarActionMap[event.id] = {
-                            parentCalendarAction: proposed,
-                        };
-                    });
-                }
-            });
-
-            console.log("Calendar Event Map:", this.calendarEventToCalendarActionMap);
+            this.parseFullCalendarEvents();
         },
 
         closePopover() {
@@ -378,13 +295,16 @@ export default {
     },
 
     mounted() {
-        if (localStorage.getItem('bearer_token')) {
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('bearer_token')}`;
+        if (localStorage.getItem("bearer_token")) {
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem(
+                "bearer_token",
+            )}`;
         } else {
             this.switchToCEO();
         }
 
         this.loadProposedActions();
+        this.loadUrgentCalendarActions();
 
         this.buildCalendarEventToCalendarActionMap();
     },
