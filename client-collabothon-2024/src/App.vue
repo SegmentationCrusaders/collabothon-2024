@@ -1,7 +1,9 @@
 <template>
+    <CalendarActionIdeaCarousel @onCreate="createEmailFromTemplate" />
+    
     <div class="grid grid-cols-12 gap-4 p-4">
         <!-- Calendar Island in the first section -->
-        <div class="col-span-12 p-6 bg-white rounded-lg shadow-md lg:col-span-7">
+        <div class="col-span-12 p-6 bg-white commerzbank-shadow lg:col-span-7 border rounded-lg commerzbank-border">
             <h2 class="mb-4 text-xl font-bold text-black">Calendar</h2>
             <CalendarComponent
                 :events="allCalendarEvents"
@@ -17,7 +19,7 @@
             />
 
             <!-- Urgent CalendarActions Section -->
-            <div class="flex-1 p-3 overflow-y-auto bg-gray-100 rounded-lg shadow-md max-h-96">
+            <div class="flex-1 p-3 overflow-y-auto bg-gray-100 commerzbank-shadow max-h-96 border rounded-lg commerzbank-border">
                 <h2 class="mb-4 text-lg font-bold text-black">Urgent Actions</h2>
                 <CalendarActionList
                     v-for="todo in todoEvents"
@@ -28,7 +30,7 @@
             </div>
 
             <!-- Proposed CalendarActions Section -->
-            <div class="flex-1 p-3 overflow-y-auto bg-gray-100 rounded-lg shadow-md max-h-96">
+            <div class="flex-1 p-3 overflow-y-auto bg-gray-100 commerzbank-shadow max-h-96 border rounded-lg commerzbank-border">
                 <div class="sticky top-0 bg-gray-100">
                     <h2 class="mb-4 text-lg font-bold text-black">Proposed Actions</h2>
                 </div>
@@ -56,6 +58,7 @@
         <Transition name="fade-popover">
             <ScheduleConsultationsPopover
                 v-if="shouldDisplayScheduleConsultationsPopover"
+                :template="template"
                 @close="closePopover"
             />
         </Transition>
@@ -104,6 +107,7 @@ import ScheduleConsultations from "./components/ScheduleConsultations.vue";
 import CalendarActionList from "./components/CalendarActionListComponent.vue";
 import CalendarActionPopover from "./components/popovers/CalendarActionPopover.vue";
 import ScheduleConsultationsPopover from "./components/popovers/ScheduleConsultationsPopover.vue";
+import CalendarActionIdeaCarousel from "./components/CalendarActionIdeaCarousel.vue";
 
 export default {
     components: {
@@ -112,6 +116,7 @@ export default {
         CalendarActionList,
         CalendarActionPopover,
         ScheduleConsultationsPopover,
+        CalendarActionIdeaCarousel,
     },
 
     data() {
@@ -119,6 +124,7 @@ export default {
             todoEvents: [],
             proposedEvents: [],
             allCalendarEvents: [],
+            template: 'consultation',
 
             roles: {
                 "2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2": "CEO",
@@ -188,9 +194,7 @@ export default {
             console.log("Todo Events:", this.todoEvents);
 
             this.todoEvents.forEach((todo) => {
-                console.log("todo", todo);
                 if (todo.calendar_events) {
-                    console.log("Calendar Events:", todo.calendar_events);
                     todo.calendar_events.forEach((calendarEvent) => {
                         events.push({
                             id: calendarEvent.uuid,
@@ -290,8 +294,27 @@ export default {
         },
 
         showScheduleConsultationsPopover() {
+            this.template = 'consultation';
+
             this.shouldDisplayScheduleConsultationsPopover = true;
         },
+
+        getLoggedUser() {
+            axios.get("/user", {
+
+            }).then((response) => {
+                this.$root.loggedUser = response.data.data;
+            }) .catch((error) => {
+                console.error("Error loading logged user:", error);
+            });
+        },
+
+        createEmailFromTemplate(template) {
+            this.template = template;
+            console.log(template)
+
+            this.showScheduleConsultationsPopover();
+        }
     },
 
     mounted() {
@@ -302,6 +325,8 @@ export default {
         } else {
             this.switchToCEO();
         }
+
+        this.getLoggedUser();
 
         this.loadProposedActions();
         this.loadUrgentCalendarActions();
