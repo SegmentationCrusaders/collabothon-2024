@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
@@ -82,11 +83,11 @@ class ClientEmployee extends Model
     /**
      * Get the calendar events that were issued by the employee.
      *
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function calendarEvents(): HasMany
+    public function calendarEvents(): BelongsToMany
     {
-        return $this->hasMany(CalendarEvent::class)
+        return $this->belongsToMany(CalendarEvent::class)
             ->withPivot('accepted');
     }
 }

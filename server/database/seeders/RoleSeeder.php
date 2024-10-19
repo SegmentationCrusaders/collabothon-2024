@@ -28,5 +28,9 @@ class RoleSeeder extends Seeder
         Role::firstOrCreate([
             'name' => RoleEnum::ACCOUNTANT->value
         ]);
+
+        Role::firstOrCreate([
+            'name' => RoleEnum::COMMERZBANK_ADMIN->value
+        ]);
     }
 }

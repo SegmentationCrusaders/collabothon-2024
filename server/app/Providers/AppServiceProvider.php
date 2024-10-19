@@ -35,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
                 'koP7tEvVel3gfG0gWOjG3bTgrzo1ubzbfsD5vKll2mjVM263aEGPHhIZSIMWNdy1' => RoleEnum::CONTROLLER->value,
                 'Yk7lYm6LaZwpeDW4yJucFVJ5UaqfWbL9Hc9t5SjmgmZXs03HWZQnaBFErTANrFgm' => RoleEnum::CASH_MANAGEMENT_SPECIALIST->value,
                 'BB4I3gN8OJZPFfVt4fWuYUYxhvnB0jS6feg0KQCx0u33EIl6aCgbx7qZ1VJOxsm0' => RoleEnum::ACCOUNTANT->value,
+                's0G3UTt79wsL4wgIHHBea7ptulrXpCvxIOYRXBdM5rOIbIdasOhAaKRWSJQG1XrU' => RoleEnum::COMMERZBANK_ADMIN->value,
             ];
 
             if (array_key_exists($token, $tokenRoleMap)) {

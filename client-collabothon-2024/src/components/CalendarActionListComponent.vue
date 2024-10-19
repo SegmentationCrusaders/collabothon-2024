@@ -5,10 +5,10 @@
             <div class="flex flex-wrap">
                 <span
                     v-for="tag in action.tags"
-                    :key="tag"
+                    :key="tag.uuid"
                     class="px-2 py-1 mr-1 text-green-800 bg-green-100 rounded-full"
                 >
-                    {{ tag }}
+                    {{ tag.tag }}
                 </span>
             </div>
         </div>

@@ -14,28 +14,6 @@ class CalendarActionTagSeeder extends Seeder
      */
     public function run(): void
     {
-        CalendarActionTag::firstOrCreate([
-            'tag' => CalendarActionTagEnum::CASH_FLOW->value,
-        ]);
 
-        CalendarActionTag::firstOrCreate([
-            'tag' => CalendarActionTagEnum::SHORT_TERM_LOAN->value,
-        ]);
-
-        CalendarActionTag::firstOrCreate([
-            'tag' => CalendarActionTagEnum::LONG_TERM_LOAN->value,
-        ]);
-
-        CalendarActionTag::firstOrCreate([
-            'tag' => CalendarActionTagEnum::PAYMENT->value,
-        ]);
-
-        CalendarActionTag::firstOrCreate([
-            'tag' => CalendarActionTagEnum::TECHNICAL->value,
-        ]);
-
-        CalendarActionTag::firstOrCreate([
-            'tag' => CalendarActionTagEnum::OTHER->value,
-        ]);
     }
 }

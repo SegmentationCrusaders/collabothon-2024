@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CalendarActionResource;
 use App\Models\CalendarAction;
-use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class CalendarActionController extends Controller
@@ -21,8 +21,8 @@ class CalendarActionController extends Controller
                 },
                 'calendarActionStatus'
             ])
-            ->whereHasPermission(Auth::user())
-            ->paginate(5);
+            ->whereHasPermission(Auth::user(), CalendarAction::class)
+            ->paginate();
 
         return CalendarActionResource::collection($calendarActions);
     }
