@@ -80,4 +80,23 @@ class CalendarEvent extends Model
         return $this->belongsToMany(BankEmployee::class)
             ->withPivot('accepted');
     }
+
+    public function clone(): CalendarEvent
+    {
+        $cloned = $this->replicate();
+
+        $cloned->uuid = Str::uuid()->toString();
+        $cloned->push();
+
+        $this->relations = [];
+
+        foreach($this->getRelations() as $relation => $items){
+            foreach($items as $item){
+                unset($item->id);
+                $cloned->{$relation}()->create($item->toArray());
+            }
+        }
+
+        return $cloned;
+    }
 }

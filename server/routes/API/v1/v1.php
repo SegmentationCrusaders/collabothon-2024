@@ -3,6 +3,7 @@
 use App\Helpers\APIAuth;
 use App\Http\Controllers\BankEmployeeController;
 use App\Http\Controllers\CalendarActionController;
+use App\Http\Controllers\CalendarEventActionController;
 use App\Http\Controllers\CalendarActionTagController;
 use App\Http\Controllers\CalendarActionTemplateController;
 use App\Http\Resources\BankEmployeeResource;
@@ -35,4 +36,15 @@ Route::middleware(['auth:apiKey'])->group(function () {
 
     Route::get('/general-advisor', [CalendarActionTemplateController::class, 'index']);
 
+    Route::post('/calendar-event-decline/{uuid}', [CalendarEventActionController::class, 'decline'])
+        ->name('calendar-event-decline')
+    ;
+
+    Route::post('/calendar-event-accept/{uuid}', [CalendarEventActionController::class, 'accept'])
+        ->name('calendar-event-accept')
+    ;
+
+    Route::post('/calendar-event-change-interval/{uuid}', [CalendarEventActionController::class, 'changeInterval'])
+        ->name('calendar-event-change-interval')
+    ;
 });
