@@ -119,8 +119,8 @@ trait PermissionScopes
                         'tag' => [
                             CalendarActionTagEnum::PAYMENT->value,
                             CalendarActionTagEnum::CASH_FLOW->value,
-                            CalendarActionTagEnum::SHORT_TERM_LOAN->value,
-                            CalendarActionTagEnum::LONG_TERM_LOAN->value,
+                            // CalendarActionTagEnum::SHORT_TERM_LOAN->value,
+                            // CalendarActionTagEnum::LONG_TERM_LOAN->value,
                             CalendarActionTagEnum::TECHNICAL->value,
                             CalendarActionTagEnum::OTHER->value
                         ]
@@ -134,8 +134,8 @@ trait PermissionScopes
                         'tag' => [
                             CalendarActionTagEnum::PAYMENT->value,
                             CalendarActionTagEnum::CASH_FLOW->value,
-                            CalendarActionTagEnum::SHORT_TERM_LOAN->value,
-                            CalendarActionTagEnum::LONG_TERM_LOAN->value,
+                            // CalendarActionTagEnum::SHORT_TERM_LOAN->value,
+                            // CalendarActionTagEnum::LONG_TERM_LOAN->value,
                             CalendarActionTagEnum::TECHNICAL->value,
                             CalendarActionTagEnum::OTHER->value
                         ]
@@ -150,8 +150,8 @@ trait PermissionScopes
                     'tag' => [
                         CalendarActionTagEnum::PAYMENT->value,
                         CalendarActionTagEnum::CASH_FLOW->value,
-                        CalendarActionTagEnum::SHORT_TERM_LOAN->value,
-                        CalendarActionTagEnum::LONG_TERM_LOAN->value,
+                        // CalendarActionTagEnum::SHORT_TERM_LOAN->value,
+                        // CalendarActionTagEnum::LONG_TERM_LOAN->value,
                         CalendarActionTagEnum::TECHNICAL->value,
                         CalendarActionTagEnum::OTHER->value
                     ]
@@ -271,7 +271,7 @@ trait PermissionScopes
                                         $query->where($key, $value);
                                     }
                                 }
-                            });
+                            })->orWhereDoesntHave($relation);
                         }
                     }
                 }

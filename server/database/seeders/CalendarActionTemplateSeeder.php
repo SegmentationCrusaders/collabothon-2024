@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Helpers\Enums\CalendarActionTagEnum;
 use App\Models\CalendarActionTag;
 use App\Models\CalendarActionTemplate;
+use App\Models\Idea;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -77,6 +78,111 @@ class CalendarActionTemplateSeeder extends Seeder
         ]);
         $technicalMeetingTemplate->calendarActionTags()->attach([
             $technicalTag->id, $otherTag->id,
+        ]);
+
+        $instalmentPaymentReminderTemplate = CalendarActionTemplate::create([
+            'title' => 'Instalment Payment Reminder',
+            'description' => 'Remember to pay your instalment.',
+        ]);
+        $instalmentPaymentReminderTemplate->calendarActionTags()->attach([
+            $paymentTag->id, $longTermLoanTag->id,
+        ]);
+
+        $instalmentPaymentReminderTemplate = CalendarActionTemplate::create([
+            'title' => 'Instalment Payment Reminder',
+            'description' => 'Remember to pay your instalment.',
+        ]);
+        $instalmentPaymentReminderTemplate->calendarActionTags()->attach([
+            $paymentTag->id, $shortTermLoanTag->id,
+        ]);
+
+        $creditArrangementMeetingTemplate = CalendarActionTemplate::create([
+            'title' => 'Credit Arrangement Meeting',
+            'description' => 'Discuss and arrange credit terms.',
+        ]);
+        $creditArrangementMeetingTemplate->calendarActionTags()->attach([
+            $longTermLoanTag->id, $technicalTag->id,
+        ]);
+
+        $loanArrangementMeetingTemplate = CalendarActionTemplate::create([
+            'title' => 'Loan Arrangement Meeting',
+            'description' => 'Discuss and arrange loan terms.',
+        ]);
+        $loanArrangementMeetingTemplate->calendarActionTags()->attach([
+            $shortTermLoanTag->id, $technicalTag->id,
+        ]);
+
+        $technicalAssistanceMeetingTemplate = CalendarActionTemplate::create([
+            'title' => 'Technical Assistance Meeting',
+            'description' => 'Discuss technical issues and provide assistance.',
+        ]);
+        $technicalAssistanceMeetingTemplate->calendarActionTags()->attach([
+            $technicalTag->id, $otherTag->id,
+        ]);
+
+        $cooworkingTemplate = CalendarActionTemplate::create([
+            'title' => 'Coworking Concept',
+            'description' => 'Discuss coworking concepts for employees.',
+        ]);
+        $cooworkingTemplate->calendarActionTags()->attach([
+            $technicalTag->id, $otherTag->id,
+        ]);
+
+        Idea::create([
+            'content' => '70% of the midcap companies see energy cost as the number 1 problem in the future with sustainability close behind. One of the biggest cost factors is office space. Have you thought of coworking concepts for your employees? Need more information?',
+            'calendar_action_template_id' => $cooworkingTemplate->id,
+        ]);
+
+        $vehicleFloatTemplate = CalendarActionTemplate::create([
+            'title' => 'Vehicle Fleet Management',
+            'description' => 'Discuss vehicle fleet management and carsharing.',
+        ]);
+        $vehicleFloatTemplate->calendarActionTags()->attach([
+            $technicalTag->id, $otherTag->id,
+        ]);
+
+        Idea::create([
+            'content' => 'One of the biggest cost drivers in your cash flow is the vehicle fleet. Have you thought about carsharing in order to save costs and gain in sustainability? Need more information?',
+            'calendar_action_template_id' => $vehicleFloatTemplate->id,
+        ]);
+
+        $foreignCurrienciesTemplate = CalendarActionTemplate::create([
+            'title' => 'Foreign Currencies',
+            'description' => 'Discuss foreign currency management and exchange rate risk.',
+        ]);
+        $foreignCurrienciesTemplate->calendarActionTags()->attach([
+            $technicalTag->id, $otherTag->id,
+        ]);
+
+        Idea::create([
+            'content' => 'You have regular payments in foreign currencies - have you thought about securing an advantageous exchange rate to gain in planning security and minimize cost risk? Need more information?',
+            'calendar_action_template_id' => $foreignCurrienciesTemplate->id,
+        ]);
+
+        $accountingRegulationsTemplate = CalendarActionTemplate::create([
+            'title' => 'Accounting Regulations',
+            'description' => 'Discuss changes in accounting regulations.',
+        ]);
+        $accountingRegulationsTemplate->calendarActionTags()->attach([
+            $technicalTag->id, $otherTag->id,
+        ]);
+
+        Idea::create([
+            'content' => 'Changes in accounting regulations will come into force starting January 1st, 2027. What does that mean for your business, what changes ? Join our information session',
+            'calendar_action_template_id' => $accountingRegulationsTemplate->id,
+        ]);
+
+        $susutainabilityTemplate = CalendarActionTemplate::create([
+            'title' => 'Sustainability',
+            'description' => 'Discuss sustainability and environmental issues.',
+        ]);
+        $susutainabilityTemplate->calendarActionTags()->attach([
+            $technicalTag->id, $otherTag->id,
+        ]);
+
+        Idea::create([
+            'content' => 'Sustainability is one of the main concerns of companies - but how can you include this in your business decisions, what does it mean, what are the next steps ? To get help with these questions  that fits your business click here',
+            'calendar_action_template_id' => $susutainabilityTemplate->id,
         ]);
     }
 }
