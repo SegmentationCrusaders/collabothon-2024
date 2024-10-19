@@ -323,7 +323,7 @@ export default {
                     calendarAction.calendar_events.forEach((calendarEvent) => {
                         events.push({
                             id: calendarEvent.uuid,
-                            title: calendarEvent.title,
+                            title: calendarAction.title + " - " + calendarEvent?.location,
                             start: calendarEvent.start_date,
                             end: calendarEvent.end_date,
                             extendedProps: {
