@@ -44,7 +44,11 @@ Route::middleware(['auth:apiKey'])->group(function () {
         ->name('calendar-event-accept')
     ;
 
-    Route::post('/calendar-event-change-interval/{uuid}', [CalendarEventActionController::class, 'changeInterval'])
-        ->name('calendar-event-change-interval')
+    Route::post('/calendar-event-create/{actionUuid}', [CalendarEventActionController::class, 'createEvent'])
+        ->name('calendar-event-create')
+    ;
+
+    Route::post('/calendar-event-duplicate/{uuid}', [CalendarEventActionController::class, 'quickDuplicate'])
+        ->name('calendar-event-duplicate')
     ;
 });

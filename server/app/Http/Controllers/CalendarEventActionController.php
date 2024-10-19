@@ -73,7 +73,7 @@ class CalendarEventActionController extends Controller
         }
     }
 
-    public function changeInterval(string $uuid, Request $request): JsonResponse
+    public function quickDuplicate(string $uuid, Request $request): JsonResponse
     {
         try {
             $targetEvent = QueryBuilder::for(CalendarEvent::class)
@@ -93,6 +93,34 @@ class CalendarEventActionController extends Controller
             return response()->json(['message' => 'Event has been created successfully.']);
         } catch (Exception $e) {
             Log::error('Failed to add the calendar event: ' . $e->getMessage());
+
+            return response()->json(['error' => 'Failed to add the event.' . $e->getMessage()], 500);
+        }
+    }
+
+    public function createEvent(string $actionUuid, Request $request): JsonResponse
+    {
+        try {
+            /** @var CalendarAction $targetAction */
+            $targetAction = QueryBuilder::for(CalendarAction::class)
+                ->where('uuid', '=', $actionUuid)
+                ->whereHasPermission(Auth::user(), CalendarAction::class)
+                ->firstOrFail()
+            ;
+
+            $bodyContent = json_decode($request->getContent(), true);
+
+            $targetAction->calendarEvents()->create([
+                'start_date' => $bodyContent['start_date'],
+                'end_date' => $bodyContent['end_date'],
+                'location' => $bodyContent['location'],
+                'title' => ''
+            ]);
+            $targetAction->push();
+
+            return response()->json(['message' => 'Event has been created successfully.']);
+        } catch (Exception $e) {
+            Log::error('Failed to create the calendar event: ' . $e->getMessage());
 
             return response()->json(['error' => 'Failed to add the event.' . $e->getMessage()], 500);
         }
