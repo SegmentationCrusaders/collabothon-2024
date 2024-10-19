@@ -1,0 +1,5 @@
+## Get calendar actions
+
+GET /api/v1/calendar-actions
+Host: localhost:8000
+Authorization: Bearer 2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2
