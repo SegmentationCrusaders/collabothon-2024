@@ -26,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
         // Controller                   koP7tEvVel3gfG0gWOjG3bTgrzo1ubzbfsD5vKll2mjVM263aEGPHhIZSIMWNdy1
         // Cash management specialist   Yk7lYm6LaZwpeDW4yJucFVJ5UaqfWbL9Hc9t5SjmgmZXs03HWZQnaBFErTANrFgm
         // Accountant                   BB4I3gN8OJZPFfVt4fWuYUYxhvnB0jS6feg0KQCx0u33EIl6aCgbx7qZ1VJOxsm0
+        // Commerzbank Admin            s0G3UTt79wsL4wgIHHBea7ptulrXpCvxIOYRXBdM5rOIbIdasOhAaKRWSJQG1XrU
 
         Auth::viaRequest('apiKey', function ($request) {
             $token = $request->bearerToken();
