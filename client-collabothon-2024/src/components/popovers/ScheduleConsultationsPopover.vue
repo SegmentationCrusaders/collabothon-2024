@@ -94,7 +94,6 @@ export default {
         axios
             .get("/calendar-action-tags", {})
             .then((response) => {
-                console.log;
                 this.availableTags = response.data.data;
             })
             .catch((error) => {

@@ -16,15 +16,63 @@
                 @show-schedule-consultations-popover="showScheduleConsultationsPopover"
             />
 
-            <!-- Urgent CalendarActions Section -->
-            <div class="flex-1 p-3 overflow-y-auto bg-gray-100 rounded-lg shadow-md max-h-96">
-                <h2 class="mb-4 text-lg font-bold text-black">Urgent Actions</h2>
-                <CalendarActionList
-                    v-for="todo in todoEvents"
-                    :key="todo.id"
-                    @calendar-action-click="handleCalendarActionClick"
-                    :action="todo"
-                />
+            <!-- Urgent CalendarActions Section with Filter -->
+            <div class="flex flex-col p-4 bg-white rounded-lg shadow-md max-h-96">
+                <!-- Filter Bar -->
+                <div class="flex items-center mb-4 space-x-2">
+                    <!-- Status Filter -->
+                    <div class="w-1/2">
+                        <label for="statusFilter" class="block mb-1 text-sm font-bold text-gray-700"
+                            >Filter by Status</label
+                        >
+                        <Multiselect
+                            v-model="selectedStatus"
+                            :options="statusOptions"
+                            placeholder="Select Status"
+                            label="name"
+                            track-by="name"
+                            class="w-full"
+                            :close-on-select="true"
+                            :clear-on-select="true"
+                            :allow-empty="true"
+                        />
+                    </div>
+
+                    <!-- Tag Filter -->
+                    <div class="w-1/2">
+                        <label for="tagFilter" class="block mb-1 text-sm font-bold text-gray-700"
+                            >Filter by Tags</label
+                        >
+                        <Multiselect
+                            v-model="selectedTags"
+                            :options="tagOptions"
+                            placeholder="Select Tags"
+                            label="tag"
+                            track-by="uuid"
+                            multiple
+                            class="w-full"
+                            :close-on-select="false"
+                            :clear-on-select="false"
+                            hide-selected
+                            :allow-empty="true"
+                            tag-placeholder="Add this as a tag"
+                        />
+                    </div>
+                </div>
+
+                <!-- Urgent CalendarActions List -->
+                <div class="flex-1 overflow-y-auto">
+                    <h2 class="mb-4 text-lg font-bold text-black">Urgent Actions</h2>
+                    <template v-if="filteredUrgentCalendarActions.length === 0">
+                        <p class="text-gray-500">No urgent actions available.</p>
+                    </template>
+                    <CalendarActionList
+                        v-for="todo in filteredUrgentCalendarActions"
+                        :key="todo.uuid"
+                        @calendar-action-click="handleCalendarActionClick"
+                        :action="todo"
+                    />
+                </div>
             </div>
 
             <!-- Proposed CalendarActions Section -->
@@ -104,6 +152,8 @@ import ScheduleConsultations from "./components/ScheduleConsultations.vue";
 import CalendarActionList from "./components/CalendarActionListComponent.vue";
 import CalendarActionPopover from "./components/popovers/CalendarActionPopover.vue";
 import ScheduleConsultationsPopover from "./components/popovers/ScheduleConsultationsPopover.vue";
+import Multiselect from "vue-multiselect";
+import "vue-multiselect/dist/vue-multiselect.min.css";
 
 export default {
     components: {
@@ -112,11 +162,13 @@ export default {
         CalendarActionList,
         CalendarActionPopover,
         ScheduleConsultationsPopover,
+        Multiselect,
     },
 
     data() {
         return {
             todoEvents: [],
+            filteredUrgentCalendarActions: [],
             proposedEvents: [],
             allCalendarEvents: [],
 
@@ -135,6 +187,18 @@ export default {
             selectedCalendarAction: null,
             calendarEventToCalendarActionMap: {}, // Map to store the relationship between calendar events and actions
             shouldDisplayScheduleConsultationsPopover: false,
+
+            selectedTags: [],
+            selectedStatus: null,
+
+            statusOptions: [
+                { name: "CREATED" },
+                { name: "AWAITING" },
+                { name: "COMPLETED" },
+                { name: "CANCELLED" },
+            ],
+
+            tagOptions: [],
         };
     },
 
@@ -182,16 +246,33 @@ export default {
             window.location.reload();
         },
 
+        filterUrgentCalendarActions() {
+            let filtered = this.todoEvents;
+
+            if (this.selectedStatus && this.selectedStatus.name) {
+                filtered = filtered.filter(
+                    (event) => event.status.name === this.selectedStatus.name,
+                );
+            }
+
+            if (this.selectedTags.length > 0) {
+                filtered = filtered.filter((event) =>
+                    this.selectedTags.every((selectedTag) =>
+                        event.tags.some((tag) => tag.tag === selectedTag.tag),
+                    ),
+                );
+            }
+
+            this.filteredUrgentCalendarActions = filtered;
+            this.parseFullCalendarEvents();
+        },
+
         parseFullCalendarEvents() {
             const events = [];
 
-            console.log("Todo Events:", this.todoEvents);
-
-            this.todoEvents.forEach((todo) => {
-                console.log("todo", todo);
-                if (todo.calendar_events) {
-                    console.log("Calendar Events:", todo.calendar_events);
-                    todo.calendar_events.forEach((calendarEvent) => {
+            this.filteredUrgentCalendarActions.forEach((calendarAction) => {
+                if (calendarAction.calendar_events) {
+                    calendarAction.calendar_events.forEach((calendarEvent) => {
                         events.push({
                             id: calendarEvent.uuid,
                             title: calendarEvent.title,
@@ -205,8 +286,6 @@ export default {
                     });
                 }
             });
-
-            console.log("Full Calendar Events:", events);
 
             this.allCalendarEvents = events;
         },
@@ -236,12 +315,24 @@ export default {
                     this.todoEvents = response.data.data;
 
                     this.buildCalendarEventToCalendarActionMap();
+                    this.filterUrgentCalendarActions();
                 })
                 .catch((error) => {
                     console.error("Error loading proposed actions:", error);
                 })
                 .finally(() => {
                     this.isLoadingUrgentCalendarActions = false;
+                });
+        },
+
+        loadAvailableTags() {
+            axios
+                .get("/calendar-action-tags", {})
+                .then((response) => {
+                    this.tagOptions = response.data.data;
+                })
+                .catch((error) => {
+                    console.error("Error loading CalendarAction Tags:", error);
                 });
         },
 
@@ -260,7 +351,6 @@ export default {
 
             if (calendarAction) {
                 this.selectedCalendarAction = calendarAction;
-                console.log("Selected CalendarAction:", this.selectedCalendarAction);
             } else {
                 console.error("Event not found in the map!");
             }
@@ -294,6 +384,11 @@ export default {
         },
     },
 
+    watch: {
+        selectedStatus: "filterUrgentCalendarActions",
+        selectedTags: "filterUrgentCalendarActions",
+    },
+
     mounted() {
         if (localStorage.getItem("bearer_token")) {
             window.axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem(
@@ -305,6 +400,7 @@ export default {
 
         this.loadProposedActions();
         this.loadUrgentCalendarActions();
+        this.loadAvailableTags();
 
         this.buildCalendarEventToCalendarActionMap();
     },
