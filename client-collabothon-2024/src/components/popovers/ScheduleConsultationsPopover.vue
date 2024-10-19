@@ -18,7 +18,7 @@
                 <!-- bagde with template -->
                 <div class="flex justify-between mb-4 items center">
                     <div class="flex items-center p-2 rounded-lg comarzbank-bg">
-                        <span class="text-sm font-semibold text-white">Template:</span>
+                        <span class="text-sm font-semibold text-white">Subject:</span>
                         <span class="ml-2 text-sm font-semibold text-white">{{ currentTemplate }}</span>
                     </div>
                 </div>
@@ -32,9 +32,15 @@
 
                     <p>Dear {{ generalAdvisor.first_name }} {{ generalAdvisor.last_name }},</p>
 
+                    <br />
+
                     <p>{{ emailDescription }}</p>
 
-                    <p>Best regards,<br />The Consultation Team</p>
+                    <br />
+
+                    <p class="mb-4">Best regards,<br /> {{ $root.loggedUser.first_name }} {{ $root.loggedUser.last_name }}</p>
+
+                    <hr class="thick-hr" />
 
                     <!-- Editable tags -->
                     <div class="mt-4">
@@ -99,9 +105,7 @@ export default {
         return {
             currentTemplate: "consultation",
             emailTitle: "Consultation Request",
-            emailDescription: `We believe that your expertise and insights would be invaluable to us. We are eager to discuss potential opportunities and collaborations that could benefit both parties.
-Please let us know your availability so we can arrange a convenient time for the consultation. If you have any questions or need further information, do not hesitate to reach out to us.
-Looking forward to your positive response.`,
+            emailDescription: `I am reaching out to request your expertise and insights for a consultancy meeting.`,
             availableTags: [],
             selectedTags: [],
             generalAdvisor: null,
@@ -171,3 +175,11 @@ Looking forward to your positive response.`,
     },
 };
 </script>
+
+<style scoped>
+.thick-hr {
+    height: 4px;
+    background-color: black;
+    border: none;
+}
+</style>
