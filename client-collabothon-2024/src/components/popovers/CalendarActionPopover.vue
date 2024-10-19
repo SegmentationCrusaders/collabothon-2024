@@ -103,17 +103,15 @@
                 </ul>
               <fieldset>
                 <legend>Location:</legend>
-                <input type="text"/>
+                <input ref="location" id="calendar_event_location" type="text"/>
               </fieldset>
               <fieldset>
                 <legend>From:</legend>
                 <input ref="from_date" id="calendar_event_start_date" type="datetime-local"><br/>
-<!--                <input type="date"><br/>-->
               </fieldset>
               <fieldset>
                 <legend>To:</legend>
                 <input ref="to_date" id="calendar_event_end_date" type="datetime-local"><br/>
-<!--                <input type="date"><br/>-->
               </fieldset>
                 <button
                     @click="createNewDate(action.uuid)"
@@ -155,6 +153,17 @@ const isApproversListIsEmpty = (event) => {
   const allApprovals = [...event.bank_employees, ...event.client_employees];
 
   return allApprovals.length === 0;
+}
+
+const toIsoFormat = (dateLikeString) => {
+  const dateObj = new Date(dateLikeString);
+
+  return dateObj.getFullYear() + '-' +
+      String(dateObj.getMonth() + 1).padStart(2, '0') + '-' +
+      String(dateObj.getDate()).padStart(2, '0') + ' ' +
+      String(dateObj.getHours()).padStart(2, '0') + ':' +
+      String(dateObj.getMinutes()).padStart(2, '0') + ':' +
+      String(dateObj.getSeconds()).padStart(2, '0');
 }
 
 export default {
@@ -204,12 +213,14 @@ export default {
 
             //console.log("Creating a new date". this.$refs.from_date, this.$refs.to_date);
             console.log("Creating a new date", document.getElementById('calendar_event_start_date').value);
-            axios.post(`/calendar-event-decline/${actionUuid}`, {
-                start_date: document.getElementById('calendar_event_start_date').value || '',
-                end_date: document.getElementById('calendar_event_end_date').value || ''
+            axios.post(`/calendar-event-create/${actionUuid}`, {
+                start_date: toIsoFormat(document.getElementById('calendar_event_start_date').value.replace('T', ' ')) || '',
+                end_date: toIsoFormat(document.getElementById('calendar_event_end_date').value.replace('T', ' ')) || '',
+                location: document.getElementById('calendar_event_location').value || ''
             })
                 .then((response) => {
                     console.debug('[Calendar event] New date created', response);
+                    location.reload();
                 })
                 .catch((error) => {
                   console.error("Error accepting the event:", error);
