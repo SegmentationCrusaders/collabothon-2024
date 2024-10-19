@@ -38,7 +38,7 @@ class CalendarEventActionController extends Controller
         } catch (Exception $e) {
             Log::error('Failed to accept the calendar event: ' . $e->getMessage());
 
-            return response()->json(['error' => 'Failed to accept the event.' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to accept the event.'], 500);
         }
     }
 

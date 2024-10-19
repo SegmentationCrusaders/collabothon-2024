@@ -27,7 +27,7 @@ class CalendarActionController extends Controller
             ->with([
                 'calendarActionTags',
                 'calendarEvents' => function ($query) {
-                    $query->withTrashed();
+                    $query->whereNull('deleted_at')->withTrashed();
                 },
                 'calendarActionStatus'
             ])

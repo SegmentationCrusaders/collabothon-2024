@@ -47,12 +47,20 @@
                 <h3 class="mb-2 text-lg font-bold">Proposed Date</h3>
                 <ul class="pl-5 text-gray-800 list-disc list-inside">
                     <li
-                        v-for="event in action.calendar_events"
+                        v-for="event in action.calendar_events.filter(evt => !isApproversListIsEmpty(evt))"
                         :key="event.id"
                         class="flex items-center justify-between p-2 rounded"
                     >
                         <CalendarEvent :event="event" />
-                        <div class="flex space-x-2">
+
+                        <div class="flex space-x-2 text-4xl" v-if="isApprovedByCurrentUser(event)">
+                            Approved <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                      <div class="flex space-x-2 text-4xl" v-else-if="isDeclinedByAll(event)"></div>
+                      <div class="flex space-x-2 text-4xl" v-else-if="isDeclinedByCurrentUser(event)">
+                        Declined <i class="fa-solid fa-circle-check"></i>
+                      </div>
+                        <div class="flex space-x-2" v-else>
                             <button
                                 @click="acceptEvent(event)"
                                 class="px-2 py-1 text-green-500 transition duration-200 ease-in-out bg-transparent rounded-md hover:bg-green-100 hover:text-yellow-700"
@@ -68,8 +76,22 @@
                         </div>
                     </li>
                 </ul>
+              <fieldset>
+                <legend>Location:</legend>
+                <input type="text"/>
+              </fieldset>
+              <fieldset>
+                <legend>From:</legend>
+                <input ref="from_date" id="calendar_event_start_date" type="datetime-local"><br/>
+<!--                <input type="date"><br/>-->
+              </fieldset>
+              <fieldset>
+                <legend>To:</legend>
+                <input ref="to_date" id="calendar_event_end_date" type="datetime-local"><br/>
+<!--                <input type="date"><br/>-->
+              </fieldset>
                 <button
-                    @click="createNewDate"
+                    @click="createNewDate(action.uuid)"
                     class="w-full p-2 mt-4 text-white bg-blue-500 rounded"
                 >
                     Create New Date
@@ -81,6 +103,33 @@
 
 <script>
 import CalendarEvent from "../CalendarEventComponent.vue";
+import {all} from "axios";
+
+const isApprovedByCurrentUser = (event) => {
+  const allApprovals = [...event.bank_employees, ...event.client_employees];
+
+  console.log('approvals', allApprovals);
+
+  return allApprovals.some((person) => person.accepted === 1).length > 1;
+};
+
+const isDeclinedByCurrentUser = (event) => {
+  const allApprovals = [...event.bank_employees, ...event.client_employees];
+
+  return allApprovals.some((person) => person.accepted === 1).length > 1;
+};
+
+const isDeclinedByAll = (event) => {
+  const allApprovals = [...event.bank_employees, ...event.client_employees];
+
+  return allApprovals.some((person) => person.accepted === 1).length === allApprovals.length;
+};
+
+const isApproversListIsEmpty = (event) => {
+  const allApprovals = [...event.bank_employees, ...event.client_employees];
+
+  return allApprovals.length === 0;
+}
 
 export default {
     props: {
@@ -94,16 +143,45 @@ export default {
     },
     methods: {
         acceptEvent(event) {
-            console.log(`Accepted meeting date: ${event.date}`);
+            axios.post(`/calendar-event-accept/${event.uuid}`)
+              .then((response) => {
+                 console.debug('[Calendar event] Accepted event with id', response);
+                 //location.reload();
+                // TODO: Reload component
+              })
+              .catch((error) => {
+                console.error("Error accepting the event:", error);
+              });
+            console.log(`Accepted meeting date: ${event.date}`, event);
             this.$emit("eventAccepted", event);
         },
         rejectEvent(event) {
+          axios.post(`/calendar-event-decline/${event.uuid}`)
+              .then((response) => {
+                  console.debug('[Calendar event] Declined event with id', response);
+                  location.reload();
+                  // TODO: Reload component
+              })
+              .catch((error) => {
+                console.error("Error accepting the event:", error);
+              });
             console.log(`Rejected meeting date: ${event.date}`);
             this.$emit("eventRejected", event);
         },
-        createNewDate() {
-            // Logic to create a new date
-            console.log("Creating a new date");
+        createNewDate: (actionUuid) => {
+
+            //console.log("Creating a new date". this.$refs.from_date, this.$refs.to_date);
+            console.log("Creating a new date", document.getElementById('calendar_event_start_date').value);
+            axios.post(`/calendar-event-decline/${actionUuid}`, {
+                start_date: document.getElementById('calendar_event_start_date').value || '',
+                end_date: document.getElementById('calendar_event_end_date').value || ''
+            })
+                .then((response) => {
+                    console.debug('[Calendar event] New date created', response);
+                })
+                .catch((error) => {
+                  console.error("Error accepting the event:", error);
+                });
         },
         closePopover() {
             this.$emit("close");
@@ -113,6 +191,10 @@ export default {
                 this.closePopover();
             }
         },
+        isApprovedByCurrentUser,
+        isDeclinedByCurrentUser,
+        isDeclinedByAll,
+        isApproversListIsEmpty
     },
 };
 </script>
