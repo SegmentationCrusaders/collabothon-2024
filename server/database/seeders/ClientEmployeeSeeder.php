@@ -21,18 +21,24 @@ class ClientEmployeeSeeder extends Seeder
      */
     public function run(): void
     {
+        $adminRoleId = Role::firstOrCreate([
+            'name' => RoleEnum::COMMERZBANK_ADMIN->value
+        ])->id;
+
         $specialistsData = [
             [
                 'first_name' => 'Lars',
                 'last_name' => 'LoanSpecialist',
                 'email' => 'Lars.Loan@commerzbank.com',
-                'phone' => '+49-69-123-8391'
+                'phone' => '+49-69-123-8391',
+                'role_id' => $adminRoleId,
             ],
             [
                 'first_name' => 'Frederic',
                 'last_name' => 'FXSpecialist',
                 'email' => 'FXFred@commerzbank.com',
-                'phone' => '+49-69-123-8643'
+                'phone' => '+49-69-123-8643',
+                'role_id' => $adminRoleId,
             ]
         ];
 
@@ -46,7 +52,8 @@ class ClientEmployeeSeeder extends Seeder
             'first_name' => 'Celia',
             'last_name' => 'CRM',
             'email' => 'Celia.CRM@commerzbank.com',
-            'phone' => '+49-69-123-4567'
+            'phone' => '+49-69-123-4567',
+            'role_id' => $adminRoleId,
         ]);
 
         $client = Client::factory()

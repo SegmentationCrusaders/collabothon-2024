@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
@@ -21,6 +22,7 @@ class BankEmployee extends Model
         'last_name',
         'email',
         'phone',
+        'role_id',
     ];
 
     /**
@@ -76,5 +78,15 @@ class BankEmployee extends Model
     {
         return $this->belongsToMany(CalendarEvent::class)
             ->withPivot('accepted');
+    }
+
+    /**
+     * Get the role of the employee.
+     *
+     * @return BelongsTo
+     */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
     }
 }

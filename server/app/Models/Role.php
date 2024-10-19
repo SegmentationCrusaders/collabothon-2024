@@ -49,4 +49,14 @@ class Role extends Model
     {
         return $this->hasMany(ClientEmployee::class);
     }
+
+    /**
+     * Get the bank employees having this role.
+     *
+     * @return HasMany
+     */
+    public function bankEmployees(): HasMany
+    {
+        return $this->hasMany(BankEmployee::class);
+    }
 }
