@@ -110,13 +110,22 @@ class CalendarEventActionController extends Controller
 
             $bodyContent = json_decode($request->getContent(), true);
 
-            $targetAction->calendarEvents()->create([
+            $event = $targetAction->calendarEvents()->create([
                 'start_date' => $bodyContent['start_date'],
                 'end_date' => $bodyContent['end_date'],
                 'location' => $bodyContent['location'],
-                'title' => ''
             ]);
             $targetAction->push();
+
+            $emp = Auth::user();
+
+            if ($emp instanceof ClientEmployee) {
+                $event->clientEmployees()->attach($emp->id, ['accepted' => 1]);
+            } else {
+                $event->clientEmployees()->attach($targetAction->clientEmployee->id, ['accepted' => null]);
+            }
+
+            $event->bankEmployees()->attach(BankEmployee::all()->random(2)->pluck('id'), ['accepted' => null]);
 
             return response()->json(['message' => 'Event has been created successfully.']);
         } catch (Exception $e) {

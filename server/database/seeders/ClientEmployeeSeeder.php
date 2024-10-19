@@ -84,9 +84,9 @@ class ClientEmployeeSeeder extends Seeder
                 'client_id' => $client->id
             ],
             [
-                'first_name' => 'Karen',
-                'last_name' => 'Accounting',
-                'email' => 'KarenFromFinance@midcap.com',
+                'first_name' => 'Ben',
+                'last_name' => 'CEO',
+                'email' => 'BenTheBoss@midcap.com',
                 'phone' => '+49-30-434-0007',
                 'role_id' => Role::firstOrCreate([
                     'name' => RoleEnum::CEO->value

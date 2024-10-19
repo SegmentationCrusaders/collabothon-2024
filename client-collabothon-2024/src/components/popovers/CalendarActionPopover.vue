@@ -233,7 +233,7 @@ export default {
             axios.post(`/calendar-event-create/${actionUuid}`, {
                 start_date: toIsoFormat(document.getElementById('calendar_event_start_date').value.replace('T', ' ')) || '',
                 end_date: toIsoFormat(document.getElementById('calendar_event_end_date').value.replace('T', ' ')) || '',
-                location: document.getElementById('calendar_event_location').value || ''
+                location: document.getElementById('calendar_event_location').value || "ONLINE"
             })
                 .then((response) => {
                     console.debug('[Calendar event] New date created', response);

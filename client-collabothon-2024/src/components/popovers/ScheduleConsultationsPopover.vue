@@ -26,11 +26,30 @@
                 <!-- Mock email content -->
                 <div class="p-4 border rounded-md bg-gray-50">
                     <p><strong>From:</strong> {{ $root.loggedUser.email }}</p>
-                    <p><strong>To:</strong> {{ generalAdvisor.email }} </p>
+
+                    <!-- if bank employee sends an email allow to choose client employee, otherwise pick general advisor -->
+                    <div v-if="$root.loggedUser.role.name == 'Commerzbank admin'">
+                        <p><strong>To:</strong>
+                            <select v-model="clientEmployee" class="w-full p-2 border rounded-md">
+                                <option v-for="advisor in clientEmployees" :key="advisor.id" :value="advisor">
+                                    {{ advisor.first_name }} {{ advisor.last_name }} - {{ advisor.email }}
+                                </option>
+                            </select>
+                        </p>
+                    </div>
+                    <div v-else>
+                        <p><strong>To:</strong> {{ generalAdvisor.email }} </p>
+                    </div>
+
                     <p><strong>Subject:</strong> {{ emailTitle }}</p>
                     <hr class="my-2" />
 
-                    <p>Dear {{ generalAdvisor.first_name }} {{ generalAdvisor.last_name }},</p>
+                    <div v-if="$root.loggedUser.role.name == 'Commerzbank admin'">
+                        <p>Dear {{ clientEmployee?.first_name ?? '' }} {{ clientEmployee?.last_name ?? '' }},</p>
+                    </div>
+                    <div v-else>
+                        <p>Dear {{ generalAdvisor.first_name }} {{ generalAdvisor.last_name }},</p>
+                    </div>
 
                     <br />
 
@@ -105,10 +124,12 @@ export default {
         return {
             currentTemplate: "consultation",
             emailTitle: "Consultation Request",
-            emailDescription: `I am reaching out to request your expertise and insights for a consultancy meeting.`,
+            emailDescription: `I am reaching out to request a consultancy meeting with your about the mentioned topic.`,
             availableTags: [],
             selectedTags: [],
             generalAdvisor: null,
+            clientEmployee: null,
+            clientEmployees: [],
         };
     },
     methods: {
@@ -140,6 +161,18 @@ export default {
             });
         },
 
+        loadClientEmployees() {
+            axios.get("/client-employees", {
+
+            })
+            .then((response) => {
+                this.clientEmployees = response.data.data;
+            })
+            .catch((error) => {
+                console.error("Error loading Client Employees:", error);
+            });
+        },
+
         loadCalendarActionTags() {
             axios.get("/calendar-action-tags", {
 
@@ -157,6 +190,7 @@ export default {
                 title: this.emailTitle,
                 description: this.emailDescription,
                 tags: this.selectedTags.map((tag) => tag.uuid),
+                client_employee_uuid: this.clientEmployee?.uuid ?? null,
             }).then((response) => {
                 this.$emit("emailSubmitted");
                 this.closePopover();
@@ -168,6 +202,8 @@ export default {
 
     mounted() {
         this.loadGeneralAdvisor();
+        this.loadClientEmployees();
+
         this.loadCalendarActionTags();
 
         this.currentTemplate = this.template;

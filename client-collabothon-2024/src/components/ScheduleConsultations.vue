@@ -4,7 +4,7 @@
             @click="handleScheduleConsultations"
             class="px-4 py-2 font-semibold commerzbank-color transition bg-white rounded-lg shadow-md hover:bg-yellow-100"
         >
-            Schedule Consultations
+            Schedule Consultation
         </button>
     </div>
 </template>

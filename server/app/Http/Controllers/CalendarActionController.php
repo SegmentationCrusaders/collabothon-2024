@@ -9,6 +9,7 @@ use App\Models\CalendarAction;
 use App\Models\CalendarActionStatus;
 use App\Models\CalendarActionTag;
 use App\Models\CalendarEvent;
+use App\Models\ClientEmployee;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -57,6 +58,7 @@ class CalendarActionController extends Controller
             'description' => 'required|string',
             'tags' => 'array',
             'tags.*' => 'uuid',
+            'client_employee_uuid' => 'uuid|nullable',
         ]);
 
         DB::beginTransaction();
@@ -89,7 +91,10 @@ class CalendarActionController extends Controller
             'calendar_action_id' => $calendarAction->id,
         ]);
 
-        $calendarEvent->clientEmployees()->attach(Auth::user()->id, ['accepted' => null]);
+        $emp = $request->client_employee_uuid ?
+            ClientEmployee::where('uuid', $request->client_employee_uuid)->first() : Auth::user();
+
+        $calendarEvent->clientEmployees()->attach($emp->id, ['accepted' => null]);
 
         $specialists = BankEmployee::all()->random(2);
         $calendarEvent->bankEmployees()->attach($specialists->pluck('id'), ['accepted' => true]);
