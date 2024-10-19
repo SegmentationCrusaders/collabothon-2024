@@ -12,7 +12,9 @@
         <!-- Events Island with CalendarActions stacked in the same column -->
         <div class="flex flex-col col-span-12 space-y-4 lg:col-span-5">
             <!-- Schedule Consultations -->
-            <ScheduleConsultations />
+            <ScheduleConsultations
+                @show-schedule-consultations-popover="showScheduleConsultationsPopover"
+            />
 
             <!-- Urgent CalendarActions Section -->
             <div class="flex-1 p-3 overflow-y-auto bg-gray-100 rounded-lg shadow-md">
@@ -38,12 +40,22 @@
         </div>
 
         <!-- Popover for displaying selected CalendarAction -->
-        <CalendarActionPopover
-            v-if="selectedCalendarAction"
-            :action="selectedCalendarAction"
-            @eventAccepted="handleEventAccepted"
-            @close="closePopover"
-        />
+        <Transition name="fade-popover">
+            <CalendarActionPopover
+                v-if="selectedCalendarAction"
+                :action="selectedCalendarAction"
+                @eventAccepted="handleEventAccepted"
+                @close="closePopover"
+            />
+        </Transition>
+
+        <!-- Popover for displaying SchedulingConsultation -->
+        <Transition name="fade-popover">
+            <ScheduleConsultationsPopover
+                v-if="shouldDisplayScheduleConsultationsPopover"
+                @close="closePopover"
+            />
+        </Transition>
     </div>
 </template>
 
@@ -52,6 +64,7 @@ import CalendarComponent from "./components/CalendarComponent.vue";
 import ScheduleConsultations from "./components/ScheduleConsultations.vue";
 import CalendarActionList from "./components/CalendarActionListComponent.vue";
 import CalendarActionPopover from "./components/popovers/CalendarActionPopover.vue";
+import ScheduleConsultationsPopover from "./components/popovers/ScheduleConsultationsPopover.vue";
 
 export default {
     components: {
@@ -59,6 +72,7 @@ export default {
         ScheduleConsultations,
         CalendarActionList,
         CalendarActionPopover,
+        ScheduleConsultationsPopover,
     },
 
     data() {
@@ -123,10 +137,49 @@ export default {
                         },
                     ],
                 },
+                {
+                    id: 3,
+                    title: "Test new product features",
+                    tags: ["webinar", "social media"],
+                    events: [
+                        {
+                            id: 4,
+                            title: "312",
+                            start: "2024-10-22T09:00:00",
+                            end: "2024-10-22T10:00:00",
+                        },
+                        {
+                            id: 5,
+                            title: "123",
+                            start: "2024-10-27T13:00:00",
+                            end: "2024-10-27T14:30:00",
+                        },
+                    ],
+                },
+                {
+                    id: 4,
+                    title: "Test new product features",
+                    tags: ["webinar", "social media"],
+                    events: [
+                        {
+                            id: 5,
+                            title: "312",
+                            start: "2024-10-22T09:00:00",
+                            end: "2024-10-22T10:00:00",
+                        },
+                        {
+                            id: 6,
+                            title: "123",
+                            start: "2024-10-27T13:00:00",
+                            end: "2024-10-27T14:30:00",
+                        },
+                    ],
+                },
             ],
             selectedEvent: null, // Track the selected event for CalendarAction
             selectedCalendarAction: null,
             calendarEventToCalendarActionMap: {}, // Map to store the relationship between calendar events and actions
+            shouldDisplayScheduleConsultationsPopover: false,
         };
     },
 
@@ -172,7 +225,6 @@ export default {
 
     methods: {
         handleCalendarEventClick(eventId) {
-            console.log("Calendar Event Clicked:", eventId);
             const calendarAction = this.calendarEventToCalendarActionMap[eventId];
 
             if (calendarAction) {
@@ -211,6 +263,11 @@ export default {
 
         closePopover() {
             this.selectedCalendarAction = null;
+            this.shouldDisplayScheduleConsultationsPopover = false;
+        },
+
+        showScheduleConsultationsPopover() {
+            this.shouldDisplayScheduleConsultationsPopover = true;
         },
     },
 
@@ -220,4 +277,18 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+/* Custom transition for all popovers */
+.fade-popover-enter-active,
+.fade-popover-leave-active {
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+.fade-popover-enter, .fade-popover-leave-to /* .fade-popover-leave-active for <2.1.8 */ {
+    opacity: 0;
+    transform: translateY(-10px); /* Optional: adds a slight slide-up effect */
+}
+.fade-popover-leave-active {
+    opacity: 0;
+    transform: translateY(0);
+}
+</style>
