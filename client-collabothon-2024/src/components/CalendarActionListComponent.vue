@@ -12,8 +12,10 @@
                     {{ tag.tag }}
                 </span>
             </div>
-            <p class="mt-2 text-sm text-gray-500">Status: {{ action.status?.name }}</p>
-            <div class="mt-4">
+            <div v-if="action.status">
+                <p class="mt-2 text-sm text-gray-500">Status: {{ action.status?.name }}</p>
+            </div>
+            <!-- <div class="mt-4">
                 <h5 class="font-medium">Calendar Events:</h5>
                 <ul>
                     <li
@@ -27,7 +29,7 @@
                         <p>End: {{ event.end_date }}</p>
                     </li>
                 </ul>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
