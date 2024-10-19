@@ -23,6 +23,8 @@
                     {{ tag.tag }}
                 </span>
 
+                <CalendarActionStatus :action="action" />
+                
                 <p class="my-2 text-gray-600">Description: {{ action?.description }}</p>
 
                 <div v-if="selectedEvent">
@@ -104,6 +106,7 @@
 </template>
 
 <script>
+import CalendarActionStatus from "../CalendarActionStatus.vue";
 import CalendarEvent from "../CalendarEventComponent.vue";
 
 export default {
@@ -115,6 +118,7 @@ export default {
     },
     components: {
         CalendarEvent,
+        CalendarActionStatus,
     },
     data() {
         return {
