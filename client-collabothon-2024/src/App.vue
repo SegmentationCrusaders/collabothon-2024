@@ -1,7 +1,5 @@
 <template>
-    <CalendarActionIdeaCarousel @onCreate="showScheduleConsultationsPopover" />
-
-    <div class="grid grid-cols-12 gap-4 p-4">
+    <div class="grid grid-cols-12 gap-4 p-8">
         <!-- Calendar Island in the first section -->
         <div class="col-span-12 p-6 bg-white commerzbank-shadow lg:col-span-7 border rounded-lg commerzbank-border">
             <h2 class="mb-4 text-xl font-bold text-black">Calendar</h2>
@@ -29,15 +27,10 @@
                 />
             </div>
 
-            <!-- Proposed CalendarActions Section -->
-            <div class="flex-1 p-3 overflow-y-auto bg-gray-100 commerzbank-shadow max-h-96 border rounded-lg commerzbank-border">
-                <h2 class="mb-4 text-lg font-bold text-black">Proposed Actions</h2>
-                <CalendarActionList
-                    v-for="proposed in proposedActions"
-                    @calendar-action-click="handleCalendarActionClick"
-                    :key="proposed.id"
-                    :action="proposed"
-                />
+            <div v-if="$root.loggedUser">
+                <div v-if="$root.loggedUser.role.name == 'CEO' || $root.loggedUser.role.name == 'Controller'">
+                    <CalendarActionIdeaCarousel @onCreate="showScheduleConsultationsPopover" />
+                </div>
             </div>
         </div>
 
@@ -296,9 +289,8 @@ export default {
         },
 
         showScheduleConsultationsPopover(template, tags = []) {
-            this.template = template;
-            this.tags = tags;
-            console.log(this.tags)
+            this.template = template.title;
+            this.tags = template.tags;
 
             this.shouldDisplayScheduleConsultationsPopover = true;
         },
