@@ -46,6 +46,8 @@ class CalendarEventActionController extends Controller
     {
         try {
             $targetEvent = QueryBuilder::for(CalendarEvent::class)
+                ->with('clientEmployees')
+                ->with('bankEmployees')
                 ->where('uuid', '=', $uuid)
                 ->whereHasPermission(Auth::user(), CalendarEvent::class)
                 ->firstOrFail()
@@ -53,17 +55,21 @@ class CalendarEventActionController extends Controller
 
             DB::transaction(static function() use ($targetEvent) {
                 $targetEvent->deleted_at = (string)now();
+                foreach ([...$targetEvent->clientEmployees, ...$targetEvent->bankEmployees] as $approver) {
+                    if ($approver instanceof ClientEmployee) {
+                        $targetEvent->clientEmployees()->updateExistingPivot($approver, ['accepted' => 0]);
+                    } else {
+                        $targetEvent->bankEmployees()->updateExistingPivot($approver, ['accepted' => 0]);
+                    }
+                }
                 $targetEvent->save();
-
-                $targetEvent->clientEmployees()->updateExistingPivot($targetEvent, ['accepted' => 0]);
-                $targetEvent->bankEmployees()->updateExistingPivot($targetEvent, ['accepted' => 0]);
             });
 
             return response()->json(['message' => 'Event has been declined successfully.']);
         } catch (Exception $e) {
             Log::error('Failed to delete the calendar event: ' . $e->getMessage());
 
-            return response()->json(['error' => 'Failed to decline the event.' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to decline the event.'], 500);
         }
     }
 
