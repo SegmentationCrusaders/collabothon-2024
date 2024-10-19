@@ -32,7 +32,12 @@ class CalendarActionController extends Controller
                 'calendarActionStatus'
             ])
             ->whereHasPermission(Auth::user(), CalendarAction::class)
-            ->paginate();
+            ->withCount(['calendarActionStatus as status_order' => function ($query) {
+                $query->select(DB::raw("CASE WHEN name IN ('COMPLETED', 'CANCELLED') THEN 1 ELSE 0 END"));
+            }])
+            ->orderBy('status_order')
+            ->orderBy('created_at')
+            ->paginate(100);
 
         return CalendarActionResource::collection($calendarActions);
     }
@@ -56,6 +61,7 @@ class CalendarActionController extends Controller
         $calendarAction = CalendarAction::create([
             'title' => $request->input('title'),
             'description' => $request->input('description'),
+            'description' => 'Consultation meeting',
             'client_employee_id' => Auth::user()->id,
         ]);
 

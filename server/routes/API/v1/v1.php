@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\APIAuth;
+use App\Http\Controllers\BankEmployeeController;
 use App\Http\Controllers\CalendarActionController;
 use App\Http\Controllers\CalendarActionTagController;
 use App\Http\Controllers\CalendarActionTemplateController;
@@ -29,5 +30,9 @@ Route::middleware(['auth:apiKey'])->group(function () {
     Route::get('/calendar-action-tags', [CalendarActionTagController::class, 'index']);
 
     Route::get('/calendar-action-templates', [CalendarActionTemplateController::class, 'index']);
+
+    Route::get('/bank-employees/getGeneralAdvisor', [BankEmployeeController::class, 'getGeneralAdvisor']);
+
+    Route::get('/general-advisor', [CalendarActionTemplateController::class, 'index']);
 
 });
