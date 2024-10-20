@@ -12,6 +12,11 @@
                 &times;
             </button>
 
+            <!-- Loading Spinner -->
+            <div v-if="isLoadingClientEmployees || isLoadingGeneralAdvisor" class="flex items-center justify-center w-full">
+                <i class="fa-solid fa-spinner fa-spin text-3xl text-[var(--fc-button-bg-color)]"></i>
+            </div>
+
             <div class="w-full" v-if="generalAdvisor && availableTags.length">
                 <h2 class="mb-4 text-lg font-semibold text-gray-800">Preview Email</h2>
 
@@ -130,6 +135,8 @@ export default {
             generalAdvisor: null,
             clientEmployee: null,
             clientEmployees: [],
+            isLoadingClientEmployees: true,
+            isLoadingGeneralAdvisor: true,
         };
     },
     methods: {
@@ -150,11 +157,14 @@ export default {
         },
 
         loadGeneralAdvisor() {
+            this.isLoadingGeneralAdvisor = true;
+
             axios.get("/bank-employees/getGeneralAdvisor", {
 
             })
             .then((response) => {
                 this.generalAdvisor = response.data.data;
+                this.isLoadingGeneralAdvisor = false;
             })
             .catch((error) => {
                 console.error("Error loading General Advisor:", error);
@@ -162,11 +172,14 @@ export default {
         },
 
         loadClientEmployees() {
+            this.isLoadingClientEmployees = true;
+
             axios.get("/client-employees", {
 
             })
             .then((response) => {
                 this.clientEmployees = response.data.data;
+                this.isLoadingClientEmployees = false;
             })
             .catch((error) => {
                 console.error("Error loading Client Employees:", error);
