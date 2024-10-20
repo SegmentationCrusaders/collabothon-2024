@@ -42,7 +42,59 @@
                             :close-on-select="true"
                             :clear-on-select="true"
                             :allow-empty="true"
-                        />
+                        >
+                            <!-- Customize scoped slot -->
+                            <template #option="{ option }">
+                                <div class="flex items-center">
+                                    <i
+                                        v-if="option.name === 'CREATED'"
+                                        class="text-yellow-500 fas fa-file-alt me-2"
+                                    ></i>
+
+                                    <i
+                                        v-if="option.name === 'AWAITING'"
+                                        class="text-blue-500 fas fa-hourglass-half me-2"
+                                    ></i>
+
+                                    <i
+                                        v-if="option.name === 'COMPLETED'"
+                                        class="text-green-500 fas fa-check-circle me-2"
+                                    ></i>
+
+                                    <i
+                                        v-if="option.name === 'CANCELLED'"
+                                        class="text-red-500 fas fa-times-circle me-2"
+                                    ></i>
+                                    <span>{{ option.name }}</span>
+                                </div>
+                            </template>
+
+                            <!-- Customize the input -->
+                            <template #singleLabel="{ option }">
+                                <div class="flex items-center">
+                                    <i
+                                        v-if="option.name === 'CREATED'"
+                                        class="text-yellow-500 fas fa-file-alt me-2"
+                                    ></i>
+
+                                    <i
+                                        v-if="option.name === 'AWAITING'"
+                                        class="text-blue-500 fas fa-hourglass-half me-2"
+                                    ></i>
+
+                                    <i
+                                        v-if="option.name === 'COMPLETED'"
+                                        class="text-green-500 fas fa-check-circle me-2"
+                                    ></i>
+
+                                    <i
+                                        v-if="option.name === 'CANCELLED'"
+                                        class="text-red-500 fas fa-times-circle me-2"
+                                    ></i>
+                                    <span>{{ option.name }}</span>
+                                </div>
+                            </template>
+                        </Multiselect>
                     </div>
 
                     <!-- Tag Filter -->
@@ -114,7 +166,7 @@
             />
         </Transition>
     </div>
-    
+
     <DebugUtils v-if="loggedUser" />
 </template>
 
