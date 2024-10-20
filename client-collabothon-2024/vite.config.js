@@ -6,6 +6,9 @@ export default defineConfig({
     vue(),
   ],
   server: {
-    port: 80,
+    port: 5173,
   },
+  preview: {
+    port: 80,
+  }
 })
