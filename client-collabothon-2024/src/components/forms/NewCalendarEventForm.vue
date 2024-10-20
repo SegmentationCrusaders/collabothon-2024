@@ -24,8 +24,8 @@ export default {
       this.location = event.target.value;
     },
     createNewDate(actionUuid) {
-      const calendarForm = this.$refs.createNewCalendarEventForm;
-      if (!calendarForm.checkValidity()) {
+      const calendarForm = this.$refs.createNewCalendarEventForm || null;
+      if (calendarForm && !calendarForm.checkValidity()) {
         calendarForm.reportValidity();
         return false;
       }

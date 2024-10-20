@@ -4,7 +4,7 @@
         @click="closePopoverOnOutsideClick"
     >
         <div
-            class="relative flex w-3/4 p-4 bg-white rounded-lg shadow-lg commerzbank-border"
+            class="relative block lg:flex w-3/4 p-4 bg-white rounded-lg shadow-lg commerzbank-border"
             @click.stop
         >
             <!-- Close button (X) -->
@@ -16,7 +16,7 @@
             </button>
 
             <!-- Left side: CalendarAction Info -->
-            <div class="w-2/3 p-4 border-r border-gray-300">
+            <div class="w-full lg:w-2/3 p-4 border-r border-gray-300">
                 <h3 class="my-2 text-xl font-bold">Title: {{ action?.title }}</h3>
                 <span
                     v-for="tag in action.tags"
@@ -84,7 +84,7 @@
             </div>
 
             <!-- Right side: List of Events -->
-            <div class="w-1/3 p-4">
+            <div class="w-full lg:w-1/3 p-4">
                 <h3 class="mb-2 text-lg font-bold">Proposed Date</h3>
                 <div class="overflow-x-hidden overflow-y-auto max-h-80">
                     <ul class="pl-5 text-gray-800 list-disc list-inside">
