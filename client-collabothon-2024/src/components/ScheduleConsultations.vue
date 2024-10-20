@@ -1,9 +1,10 @@
 <template>
-    <div class="p-6 text-white transition comarzbank-bg rounded-lg shadow-md hover:bg-yellow-600">
+    <div class="p-6 text-white transition rounded-lg shadow-md comarzbank-bg hover:bg-yellow-600">
         <button
             @click="handleScheduleConsultations"
-            class="px-4 py-2 font-semibold commerzbank-color transition bg-white rounded-lg shadow-md hover:bg-yellow-100"
+            class="px-4 py-2 font-semibold transition bg-white rounded-lg shadow-md commerzbank-color hover:bg-yellow-100"
         >
+            <i class="fa-solid fa-paper-plane me-2"></i>
             Schedule Consultation
         </button>
     </div>
