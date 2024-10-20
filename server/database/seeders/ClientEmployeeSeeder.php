@@ -115,14 +115,16 @@ class ClientEmployeeSeeder extends Seeder
             $calendarActions = collect();
             foreach ($randomTemplates as $randomTemplate) {
                 // create from template
-                $calendarAction = CalendarAction::create([
-                    'title' => $randomTemplate->title,
-                    'description' => $randomTemplate->description,
-                    'client_employee_id' => $clientEmployee->id
-                ]);
-                $calendarAction->calendarActionTags()->attach($randomTemplate->calendarActionTags->pluck('id'));
+                for ($i = 0; $i < 5; $i++)  {
+                    $calendarAction = CalendarAction::create([
+                        'title' => $randomTemplate->title,
+                        'description' => $randomTemplate->description,
+                        'client_employee_id' => $clientEmployee->id
+                    ]);
+                    $calendarAction->calendarActionTags()->attach($randomTemplate->calendarActionTags->pluck('id'));
 
-                $calendarActions->push($calendarAction);
+                    $calendarActions->push($calendarAction);
+                }
             }
 
             $calendarActions->each(function (CalendarAction $calendarAction) use ($clientEmployee, $specialists) {

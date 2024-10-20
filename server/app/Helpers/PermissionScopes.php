@@ -23,6 +23,9 @@ trait PermissionScopes
                         'tag' => [
                             CalendarActionTagEnum::PAYMENT->value,
                             CalendarActionTagEnum::CASH_FLOW->value,
+                            CalendarActionTagEnum::INVESTMENT->value,
+                            CalendarActionTagEnum::LOAN->value,
+                            CalendarActionTagEnum::TODO->value,
                             CalendarActionTagEnum::SHORT_TERM_LOAN->value,
                             CalendarActionTagEnum::LONG_TERM_LOAN->value,
                             CalendarActionTagEnum::TECHNICAL->value,
@@ -38,6 +41,9 @@ trait PermissionScopes
                         'tag' => [
                             CalendarActionTagEnum::PAYMENT->value,
                             CalendarActionTagEnum::CASH_FLOW->value,
+                            CalendarActionTagEnum::INVESTMENT->value,
+                            CalendarActionTagEnum::LOAN->value,
+                            CalendarActionTagEnum::TODO->value,
                             CalendarActionTagEnum::SHORT_TERM_LOAN->value,
                             CalendarActionTagEnum::LONG_TERM_LOAN->value,
                             CalendarActionTagEnum::TECHNICAL->value,
@@ -53,7 +59,10 @@ trait PermissionScopes
                 'properties' => [
                     'tag' => [
                         CalendarActionTagEnum::PAYMENT->value,
+                        CalendarActionTagEnum::INVESTMENT->value,
                         CalendarActionTagEnum::CASH_FLOW->value,
+                        CalendarActionTagEnum::LOAN->value,
+                        CalendarActionTagEnum::TODO->value,
                         CalendarActionTagEnum::SHORT_TERM_LOAN->value,
                         CalendarActionTagEnum::LONG_TERM_LOAN->value,
                         CalendarActionTagEnum::TECHNICAL->value,
@@ -70,7 +79,10 @@ trait PermissionScopes
                     'calendarActionTags' => [
                         'tag' => [
                             CalendarActionTagEnum::PAYMENT->value,
+                            CalendarActionTagEnum::INVESTMENT->value,
                             CalendarActionTagEnum::CASH_FLOW->value,
+                            CalendarActionTagEnum::LOAN->value,
+                            CalendarActionTagEnum::TODO->value,
                             CalendarActionTagEnum::SHORT_TERM_LOAN->value,
                             CalendarActionTagEnum::LONG_TERM_LOAN->value,
                             CalendarActionTagEnum::TECHNICAL->value,
@@ -85,7 +97,10 @@ trait PermissionScopes
                     'calendarActionTags' => [
                         'tag' => [
                             CalendarActionTagEnum::PAYMENT->value,
+                            CalendarActionTagEnum::INVESTMENT->value,
                             CalendarActionTagEnum::CASH_FLOW->value,
+                            CalendarActionTagEnum::LOAN->value,
+                            CalendarActionTagEnum::TODO->value,
                             CalendarActionTagEnum::SHORT_TERM_LOAN->value,
                             CalendarActionTagEnum::LONG_TERM_LOAN->value,
                             CalendarActionTagEnum::TECHNICAL->value,
@@ -101,7 +116,10 @@ trait PermissionScopes
                 'properties' => [
                     'tag' => [
                         CalendarActionTagEnum::PAYMENT->value,
+                        CalendarActionTagEnum::INVESTMENT->value,
                         CalendarActionTagEnum::CASH_FLOW->value,
+                        CalendarActionTagEnum::LOAN->value,
+                        CalendarActionTagEnum::TODO->value,
                         CalendarActionTagEnum::SHORT_TERM_LOAN->value,
                         CalendarActionTagEnum::LONG_TERM_LOAN->value,
                         CalendarActionTagEnum::TECHNICAL->value,
@@ -119,6 +137,9 @@ trait PermissionScopes
                         'tag' => [
                             CalendarActionTagEnum::PAYMENT->value,
                             CalendarActionTagEnum::CASH_FLOW->value,
+                            CalendarActionTagEnum::INVESTMENT->value,
+                            CalendarActionTagEnum::TODO->value,
+                            // CalendarActionTagEnum::LOAN->value,
                             // CalendarActionTagEnum::SHORT_TERM_LOAN->value,
                             // CalendarActionTagEnum::LONG_TERM_LOAN->value,
                             CalendarActionTagEnum::TECHNICAL->value,
@@ -134,6 +155,9 @@ trait PermissionScopes
                         'tag' => [
                             CalendarActionTagEnum::PAYMENT->value,
                             CalendarActionTagEnum::CASH_FLOW->value,
+                            CalendarActionTagEnum::INVESTMENT->value,
+                            CalendarActionTagEnum::TODO->value,
+                            // CalendarActionTagEnum::LOAN->value,
                             // CalendarActionTagEnum::SHORT_TERM_LOAN->value,
                             // CalendarActionTagEnum::LONG_TERM_LOAN->value,
                             CalendarActionTagEnum::TECHNICAL->value,
@@ -150,6 +174,9 @@ trait PermissionScopes
                     'tag' => [
                         CalendarActionTagEnum::PAYMENT->value,
                         CalendarActionTagEnum::CASH_FLOW->value,
+                        CalendarActionTagEnum::INVESTMENT->value,
+                        CalendarActionTagEnum::TODO->value,
+                        // CalendarActionTagEnum::LOAN->value,
                         // CalendarActionTagEnum::SHORT_TERM_LOAN->value,
                         // CalendarActionTagEnum::LONG_TERM_LOAN->value,
                         CalendarActionTagEnum::TECHNICAL->value,
@@ -167,8 +194,9 @@ trait PermissionScopes
                         'tag' => [
                             CalendarActionTagEnum::PAYMENT->value,
                             CalendarActionTagEnum::CASH_FLOW->value,
+                            CalendarActionTagEnum::LOAN->value,
                             CalendarActionTagEnum::SHORT_TERM_LOAN->value,
-                            CalendarActionTagEnum::LONG_TERM_LOAN->value
+                            // CalendarActionTagEnum::LONG_TERM_LOAN->value
                         ]
                     ]
                 ]
@@ -180,8 +208,9 @@ trait PermissionScopes
                         'tag' => [
                             CalendarActionTagEnum::PAYMENT->value,
                             CalendarActionTagEnum::CASH_FLOW->value,
+                            CalendarActionTagEnum::LOAN->value,
                             CalendarActionTagEnum::SHORT_TERM_LOAN->value,
-                            CalendarActionTagEnum::LONG_TERM_LOAN->value
+                            // CalendarActionTagEnum::LONG_TERM_LOAN->value
                         ]
                     ]
                 ]
@@ -194,8 +223,9 @@ trait PermissionScopes
                     'tag' => [
                         CalendarActionTagEnum::PAYMENT->value,
                         CalendarActionTagEnum::CASH_FLOW->value,
+                        CalendarActionTagEnum::LOAN->value,
                         CalendarActionTagEnum::SHORT_TERM_LOAN->value,
-                        CalendarActionTagEnum::LONG_TERM_LOAN->value
+                        // CalendarActionTagEnum::LONG_TERM_LOAN->value
                     ]
                 ]
             ]

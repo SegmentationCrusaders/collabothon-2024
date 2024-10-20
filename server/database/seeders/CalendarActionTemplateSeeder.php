@@ -20,6 +20,18 @@ class CalendarActionTemplateSeeder extends Seeder
             'tag' => CalendarActionTagEnum::CASH_FLOW->value,
         ]);
 
+        $loanTag = CalendarActionTag::firstOrCreate([
+            'tag' => CalendarActionTagEnum::LOAN->value,
+        ]);
+
+        $investmentTag = CalendarActionTag::firstOrCreate([
+            'tag' => CalendarActionTagEnum::INVESTMENT->value,
+        ]);
+
+        $todoTag = CalendarActionTag::firstOrCreate([
+            'tag' => CalendarActionTagEnum::TODO->value,
+        ]);
+
         $shortTermLoanTag = CalendarActionTag::firstOrCreate([
             'tag' => CalendarActionTagEnum::SHORT_TERM_LOAN->value,
         ]);
@@ -72,20 +84,20 @@ class CalendarActionTemplateSeeder extends Seeder
             $longTermLoanTag->id, $technicalTag->id,
         ]);
 
-        $technicalMeetingTemplate = CalendarActionTemplate::create([
-            'title' => 'Technical Meeting',
-            'description' => 'Discuss technical aspects and issues.',
-        ]);
-        $technicalMeetingTemplate->calendarActionTags()->attach([
-            $technicalTag->id, $otherTag->id,
-        ]);
+        // $technicalMeetingTemplate = CalendarActionTemplate::create([
+        //     'title' => 'Technical Meeting',
+        //     'description' => 'Discuss technical aspects and issues.',
+        // ]);
+        // $technicalMeetingTemplate->calendarActionTags()->attach([
+        //     $technicalTag->id, $otherTag->id,
+        // ]);
 
         $instalmentPaymentReminderTemplate = CalendarActionTemplate::create([
             'title' => 'Payment Awaiting Second Approver',
             'description' => 'You have payment transactions waiting for approval.',
         ]);
         $instalmentPaymentReminderTemplate->calendarActionTags()->attach([
-            $paymentTag->id, $longTermLoanTag->id,
+            $paymentTag->id,
         ]);
 
         $creditArrangementMeetingTemplate = CalendarActionTemplate::create([
@@ -93,15 +105,23 @@ class CalendarActionTemplateSeeder extends Seeder
             'description' => 'Discuss options for reinvestment of funds.',
         ]);
         $creditArrangementMeetingTemplate->calendarActionTags()->attach([
-            $longTermLoanTag->id, $technicalTag->id,
+            $investmentTag->id, $cashFlowTag->id,
         ]);
 
         $loanArrangementMeetingTemplate = CalendarActionTemplate::create([
-            'title' => 'Loan Arrangement Meeting',
+            'title' => 'Long Term Loan prolongation upcoming',
             'description' => 'Discuss and arrange loan terms.',
         ]);
         $loanArrangementMeetingTemplate->calendarActionTags()->attach([
-            $shortTermLoanTag->id, $technicalTag->id,
+            $todoTag->id, $longTermLoanTag->id,
+        ]);
+
+        $papersTemplate = CalendarActionTemplate::create([
+            'title' => 'Papers for loan prolongation needed',
+            'description' => 'Discuss partnership opportunities and agreements.',
+        ]);
+        $papersTemplate->calendarActionTags()->attach([
+            $todoTag->id, $longTermLoanTag->id,
         ]);
 
         $technicalAssistanceMeetingTemplate = CalendarActionTemplate::create([
@@ -109,7 +129,7 @@ class CalendarActionTemplateSeeder extends Seeder
             'description' => 'Maintenance downtime Oct 1st 2 - 3 sam.',
         ]);
         $technicalAssistanceMeetingTemplate->calendarActionTags()->attach([
-            $technicalTag->id, $otherTag->id,
+            $technicalTag->id,
         ]);
 
         $cooworkingTemplate = CalendarActionTemplate::create([
@@ -164,17 +184,17 @@ class CalendarActionTemplateSeeder extends Seeder
             'calendar_action_template_id' => $accountingRegulationsTemplate->id,
         ]);
 
-        $susutainabilityTemplate = CalendarActionTemplate::create([
-            'title' => 'Sustainability',
-            'description' => 'Discuss sustainability and environmental issues.',
-        ]);
-        $susutainabilityTemplate->calendarActionTags()->attach([
-            $technicalTag->id, $otherTag->id,
-        ]);
+        // $susutainabilityTemplate = CalendarActionTemplate::create([
+        //     'title' => 'Sustainability',
+        //     'description' => 'Discuss sustainability and environmental issues.',
+        // ]);
+        // $susutainabilityTemplate->calendarActionTags()->attach([
+        //     $technicalTag->id, $otherTag->id,
+        // ]);
 
-        Idea::create([
-            'content' => 'Sustainability is one of the main concerns of companies - but how can you include this in your business decisions, what does it mean, what are the next steps ? To get help with these questions  that fits your business click here',
-            'calendar_action_template_id' => $susutainabilityTemplate->id,
-        ]);
+        // Idea::create([
+        //     'content' => 'Sustainability is one of the main concerns of companies - but how can you include this in your business decisions, what does it mean, what are the next steps ? To get help with these questions  that fits your business click here',
+        //     'calendar_action_template_id' => $susutainabilityTemplate->id,
+        // ]);
     }
 }

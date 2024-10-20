@@ -1,9 +1,9 @@
 <template>
     <div
-        class="fixed inset-0 z-20 flex items-center justify-center bg-gray-800 bg-opacity-75"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75"
         @click="closePopoverOnOutsideClick"
     >
-        <div class="relative flex w-3/4 p-6 bg-white rounded-lg shadow-lg commerzbank-border" @click.stop>
+        <div class="relative flex w-3/4 p-6 bg-white rounded-lg shadow-lg commerzbank-border max-h-screen overflow-y-auto" @click.stop>
             <!-- Close button -->
             <button
                 @click="closePopover"

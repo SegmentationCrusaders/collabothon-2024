@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed bottom-0 left-0 z-50 w-full bg-gray-100 bg-opacity-50 shadow-md">
+    <div class="fixed bottom-0 left-0 z-40 w-full bg-gray-100 bg-opacity-50 shadow-md">
         <hr />
 
         <div class="px-8">
