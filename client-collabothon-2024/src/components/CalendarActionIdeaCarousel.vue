@@ -7,26 +7,29 @@
             <div v-for="(idea, index) in ideas" :key="index" class="flex-shrink-0 w-full">
                 <div
                     class="relative p-6 px-8 border rounded-lg shadow-lg h-full"
-                    :style="{ backgroundColor: '#fbb809'}"
+                    :style="{ backgroundColor: '#00534e'}"
                 >
-                    <p class="mb-4 text-white-700 p-2">{{ idea.content }}</p>
-                    <div class="absolute bottom-4 right-4 text-white comarzbank-bg">
+                    <p class="mb-4 text-white p-2">{{ idea.content }}</p>
+                    <div class="absolute bottom-4 right-4 text-white">
                         <button
                             @click="createAppointment(idea.calendar_action_template)"
-                            class="p-1 font-semibold transition bg-white rounded-lg shadow-md commerzbank-color hover:bg-yellow-100"
+                            class="p-1 font-semibold transition bg-white rounded-lg shadow-md hover:bg-yellow-100"
+                            :style="{ color: '#768e96'}"
                         >
                             Create Appointment
                         </button>
                     </div>
                     <button
                         @click="prev"
-                        class="absolute left-2 p-2 text-white transform -translate-y-1/2 bg-gray-800 rounded-full top-1/2 hover:bg-gray-700"
+                        class="absolute left-2 p-2 text-white transform -translate-y-1/2 rounded-full top-1/2"
+                        :style="{ backgroundColor: '#fbb809' }"
                     >
                         ‹
                     </button>
                     <button
                         @click="next"
-                        class="absolute right-2 p-2 text-white transform -translate-y-1/2 bg-gray-800 rounded-full top-1/2 hover:bg-gray-700"
+                        class="absolute right-2 p-2 text-white transform -translate-y-1/2 rounded-full top-1/2"
+                        :style="{ backgroundColor: '#fbb809' }"
                     >
                         ›
                     </button>

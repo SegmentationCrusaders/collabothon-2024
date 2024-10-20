@@ -40,13 +40,13 @@ class CalendarActionTemplateSeeder extends Seeder
             'tag' => CalendarActionTagEnum::OTHER->value,
         ]);
 
-        $paymentTemplate = CalendarActionTemplate::create([
-            'title' => 'Future payment plan',
-            'description' => 'Discuss future payment plan.',
-        ]);
-        $paymentTemplate->calendarActionTags()->attach([
-            $paymentTag->id, $shortTermLoanTag->id, $longTermLoanTag->id,
-        ]);
+        // $paymentTemplate = CalendarActionTemplate::create([
+        //     'title' => 'Future payment plan',
+        //     'description' => 'Discuss future payment plan.',
+        // ]);
+        // $paymentTemplate->calendarActionTags()->attach([
+        //     $paymentTag->id, $shortTermLoanTag->id, $longTermLoanTag->id,
+        // ]);
 
         $cashFlowTemplate = CalendarActionTemplate::create([
             'title' => 'Monthly Cash Flow Review',
@@ -81,24 +81,16 @@ class CalendarActionTemplateSeeder extends Seeder
         ]);
 
         $instalmentPaymentReminderTemplate = CalendarActionTemplate::create([
-            'title' => 'Instalment Payment Reminder',
-            'description' => 'Remember to pay your instalment.',
+            'title' => 'Payment Awaiting Second Approver',
+            'description' => 'You have payment transactions waiting for approval.',
         ]);
         $instalmentPaymentReminderTemplate->calendarActionTags()->attach([
             $paymentTag->id, $longTermLoanTag->id,
         ]);
 
-        $instalmentPaymentReminderTemplate = CalendarActionTemplate::create([
-            'title' => 'Instalment Payment Reminder',
-            'description' => 'Remember to pay your instalment.',
-        ]);
-        $instalmentPaymentReminderTemplate->calendarActionTags()->attach([
-            $paymentTag->id, $shortTermLoanTag->id,
-        ]);
-
         $creditArrangementMeetingTemplate = CalendarActionTemplate::create([
-            'title' => 'Credit Arrangement Meeting',
-            'description' => 'Discuss and arrange credit terms.',
+            'title' => 'Bond Investment Will Soon Come To Term',
+            'description' => 'Discuss options for reinvestment of funds.',
         ]);
         $creditArrangementMeetingTemplate->calendarActionTags()->attach([
             $longTermLoanTag->id, $technicalTag->id,
@@ -113,8 +105,8 @@ class CalendarActionTemplateSeeder extends Seeder
         ]);
 
         $technicalAssistanceMeetingTemplate = CalendarActionTemplate::create([
-            'title' => 'Technical Assistance Meeting',
-            'description' => 'Discuss technical issues and provide assistance.',
+            'title' => 'Scheduled Maintenance Downtime',
+            'description' => 'Maintenance downtime Oct 1st 2 - 3 sam.',
         ]);
         $technicalAssistanceMeetingTemplate->calendarActionTags()->attach([
             $technicalTag->id, $otherTag->id,

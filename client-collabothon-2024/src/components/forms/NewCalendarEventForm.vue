@@ -74,8 +74,7 @@ export default {
         <input @change="onCheckOnline($event)" checked id="bordered-checkbox-2" type="checkbox" value="" name="bordered-checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
         <label for="bordered-checkbox-2" class="w-full py-4 text-sm font-medium text-gray-900 ms-2 dark:text-gray-300">Online</label>
       </div>
-      or
-      <input @input="updateContent($event)" :class="`bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ${this.location ? 'disabled:opacity-50' : ''}`" ref="location" id="calendar_event_location" type="text" placeholder="Enter meeting location" :disabled="location === 'ONLINE'">
+      <input @input="updateContent($event)" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 mt-2" ref="location" id="calendar_event_location" type="text" placeholder="Enter meeting location" v-if="location !== 'ONLINE'">
     </div>
   </div>
   <div class="flex flex-wrap mb-2 -mx-3">
