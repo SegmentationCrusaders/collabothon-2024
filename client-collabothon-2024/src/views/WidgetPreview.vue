@@ -265,7 +265,9 @@ export default {
                 "bearer_token",
             )}`;
         } else {
-            this.switchToCEO();
+            let token = "2rqkCplZPDNNibrXTAyA576IeOLu18ASBiuer0oqmXuCruwJ5WAaF2KvAa9pCRh2";
+            window.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("bearer_token", token);
         }
 
         this.getLoggedUser();
