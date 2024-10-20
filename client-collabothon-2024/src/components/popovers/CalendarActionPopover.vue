@@ -86,10 +86,10 @@
             <!-- Right side: List of Events -->
             <div class="w-1/3 p-4">
                 <h3 class="mb-2 text-lg font-bold">Proposed Date</h3>
-                <div class="max-h-80 overflow-y-auto overflow-x-hidden">
+                <div class="overflow-x-hidden overflow-y-auto max-h-80">
                     <ul class="pl-5 text-gray-800 list-disc list-inside">
                         <li
-                            v-for="event in action.calendar_events.filter(
+                            v-for="event in copiedCalendarEvents.filter(
                                 (evt) => !isApproversListIsEmpty(evt),
                             )"
                             :key="event.id"
@@ -184,6 +184,7 @@ export default {
     data() {
         return {
             selectedEvent: null,
+            copiedCalendarEvents: [],
         };
     },
     methods: {
@@ -194,6 +195,12 @@ export default {
                     console.debug("[Calendar event] Accepted event with id", response);
 
                     this.emitNeedToReloadUrgentCalendarAction();
+
+
+
+                    console.log("Event Accepted", event)
+
+                    this.copiedCalendarEvents.filter((evt) => evt.uuid !== event.uuid);
 
                     swal({
                         title: "Event Accepted!",
@@ -219,6 +226,8 @@ export default {
                     console.debug("[Calendar event] Declined event with id", response);
 
                     this.emitNeedToReloadUrgentCalendarAction();
+                    
+                    this.copiedCalendarEvents = this.copiedCalendarEvents.filter((evt) => evt.uuid !== event.uuid);
 
                     swal({
                         title: "Event declined!",
@@ -256,5 +265,9 @@ export default {
         isDeclinedByAll,
         isApproversListIsEmpty,
     },
+
+    mounted() {
+        this.copiedCalendarEvents = this.action.calendar_events;
+    }
 };
 </script>
