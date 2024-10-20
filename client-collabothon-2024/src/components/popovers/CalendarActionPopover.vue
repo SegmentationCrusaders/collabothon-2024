@@ -126,7 +126,10 @@
                     </li>
                 </ul>
                 <hr class="mb-4" />
-                <NewCalendarEventForm :action="action" />
+                <NewCalendarEventForm
+                    :action="action"
+                    @reload-urgent-calendar-actions="emitNeedToReloadUrgentCalendarAction"
+                />
             </div>
         </div>
     </div>
@@ -188,6 +191,8 @@ export default {
                 .then((response) => {
                     console.debug("[Calendar event] Accepted event with id", response);
 
+                    this.emitNeedToReloadUrgentCalendarAction();
+
                     swal({
                         title: "Event Accepted!",
                         text: "The event has been successfully accepted.",
@@ -196,7 +201,7 @@ export default {
                         timer: 2000,
                         timerProgressBar: true,
                     }).then(() => {
-                        location.reload();
+                        this.closePopover();
                     });
                 })
                 .catch((error) => {
@@ -211,6 +216,8 @@ export default {
                 .then((response) => {
                     console.debug("[Calendar event] Declined event with id", response);
 
+                    this.emitNeedToReloadUrgentCalendarAction();
+
                     swal({
                         title: "Event declined!",
                         text: "The event has been declined.",
@@ -218,10 +225,7 @@ export default {
                         confirmButtonText: "OK",
                         timer: 2000,
                         timerProgressBar: true,
-                    }).then(() => {
-                        location.reload();
-                    });
-                    
+                    })
                 })
                 .catch((error) => {
                     console.error("Error accepting the event:", error);
@@ -229,6 +233,11 @@ export default {
             console.log(`Rejected meeting date: ${event.date}`);
             this.$emit("eventRejected", event);
         },
+
+        emitNeedToReloadUrgentCalendarAction() {
+            this.$emit("reload-urgent-calendar-actions");
+        },
+
         closePopover() {
             this.$emit("close");
         },

@@ -206,7 +206,21 @@ export default {
                 client_employee_uuid: this.clientEmployee?.uuid ?? null,
             }).then((response) => {
                 this.$emit("emailSubmitted");
-                this.closePopover();
+
+                swal({
+                    title: "Email Sent!",
+                    text: "The email has been successfully sent.",
+                    icon: "success",
+                    iconHtml:
+                        '<i class="fa-solid fa-paper-plane" style="font-size: 2rem; color: #4caf50;"></i>',
+                    showConfirmButton: true,
+                    confirmButtonText: "OK",
+                    timer: 2500,
+                    timerProgressBar: true,
+                }).then(() => {
+                    this.closePopover();
+                });
+
             }).catch((error) => {
                 console.error("Error submitting email:", error);
             });

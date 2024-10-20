@@ -151,6 +151,7 @@
                 v-if="selectedCalendarAction"
                 :action="selectedCalendarAction"
                 @eventAccepted="handleEventAccepted"
+                @reload-urgent-calendar-actions="loadUrgentCalendarActions"
                 @close="closePopover"
             />
         </Transition>

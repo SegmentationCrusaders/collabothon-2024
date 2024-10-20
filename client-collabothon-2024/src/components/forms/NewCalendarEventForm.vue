@@ -34,6 +34,8 @@ export default {
           .then((response) => {
             console.debug('[Calendar event] New date created', response);
 
+            this.$emit("reload-urgent-calendar-actions");
+
             swal({
                 title: "New Event Created!",
                 text: "The event has been successfully created.",
@@ -41,9 +43,7 @@ export default {
                 confirmButtonText: "OK",
                 timer: 2000,
                 timerProgressBar: true,
-            }).then(() => {
-                location.reload();
-            });
+            })
 
           })
           .catch((error) => {
