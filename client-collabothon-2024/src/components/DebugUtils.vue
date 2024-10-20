@@ -1,9 +1,9 @@
 <template>
-    <div class="fixed bottom-0 left-0 w-full bg-gray-100 shadow-md">
+    <div class="fixed bottom-0 left-0 z-50 w-full bg-gray-100 bg-opacity-50 shadow-md">
         <hr />
 
         <div class="px-8">
-            <div class="col-span-2 px-4 py-1 flex justify-between items-center">
+            <div class="flex items-center justify-between col-span-2 px-4 py-1">
                 <p class="font-bold">{{ $root.loggedUser.role.name }}</p>
                 <button @click="toggleCollapse" class="px-2 py-1 text-xs font-bold text-white bg-gray-500 rounded hover:bg-gray-700">
                     {{ isCollapsed ? 'Up' : 'Down' }}
@@ -11,10 +11,10 @@
             </div>
 
             <div v-if="!isCollapsed">
-                <div class="grid grid-cols-5 gap-4 mb-4 w-1/2">
+                <div class="grid w-1/2 grid-cols-5 gap-4 mb-4">
                     <button
                         v-on:click="switchToCEO"
-                        class="px-4 py-2 font-bold text-xs text-white rounded"
+                        class="px-4 py-2 text-xs font-bold text-white rounded"
                         :class="{
                             'bg-blue-700 hover:bg-blue-700': $root.loggedUser.role.name === 'CEO',
                             'bg-gray-500 hover:bg-gray-700': $root.loggedUser.role.name !== 'CEO',
@@ -25,7 +25,7 @@
 
                     <button
                         v-on:click="switchToController"
-                        class="px-4 py-2 font-bold text-xs text-white"
+                        class="px-4 py-2 text-xs font-bold text-white"
                         :class="{
                             'bg-blue-700 hover:bg-blue-700': $root.loggedUser.role.name === 'Controller',
                             'bg-gray-500 hover:bg-gray-700': $root.loggedUser.role.name !== 'Controller',
@@ -36,7 +36,7 @@
 
                     <button
                         v-on:click="switchToCashManagementSpecialist"
-                        class="px-4 py-2 font-bold text-xs text-white"
+                        class="px-4 py-2 text-xs font-bold text-white"
                         :class="{
                             'bg-blue-700 hover:bg-blue-700': $root.loggedUser.role.name === 'Cash management specialist',
                             'bg-gray-500 hover:bg-gray-700': $root.loggedUser.role.name !== 'Cash management specialist',
@@ -47,7 +47,7 @@
 
                     <button
                         v-on:click="switchToAccountant"
-                        class="px-4 py-2 font-bold text-xs text-white"
+                        class="px-4 py-2 text-xs font-bold text-white"
                         :class="{
                             'bg-blue-700 hover:bg-blue-700': $root.loggedUser.role.name === 'Accountant',
                             'bg-gray-500 hover:bg-gray-700': $root.loggedUser.role.name !== 'Accountant',
@@ -58,7 +58,7 @@
 
                     <button
                         v-on:click="switchToCommerzbankAdmin"
-                        class="px-4 py-2 font-bold text-xs text-white"
+                        class="px-4 py-2 text-xs font-bold text-white"
                         :class="{
                             'bg-blue-700 hover:bg-blue-700': $root.loggedUser.role.name === 'Commerzbank admin',
                             'bg-gray-500 hover:bg-gray-700': $root.loggedUser.role.name !== 'Commerzbank admin',
@@ -70,14 +70,14 @@
 
                 <div class="flex px-4 pb-4 space-x-4">
                     <RouterLink v-if="$route.path != '/'"
-                        class="px-4 py-2 font-bold text-xs text-white bg-gray-500 hover:bg-gray-700"
+                        class="px-4 py-2 text-xs font-bold text-white bg-gray-500 hover:bg-gray-700"
                         to="/"
                     >
                         Show extra widget
                     </RouterLink>
 
                     <RouterLink v-if="$route.path != '/widget'"
-                        class="px-4 py-2 font-bold text-xs text-white bg-gray-500 hover:bg-gray-700"
+                        class="px-4 py-2 text-xs font-bold text-white bg-gray-500 hover:bg-gray-700"
                         to="/widget"
                     >
                         Show minified widget
