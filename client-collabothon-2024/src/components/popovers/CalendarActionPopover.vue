@@ -86,45 +86,47 @@
             <!-- Right side: List of Events -->
             <div class="w-1/3 p-4">
                 <h3 class="mb-2 text-lg font-bold">Proposed Date</h3>
-                <ul class="pl-5 text-gray-800 list-disc list-inside">
-                    <li
-                        v-for="event in action.calendar_events.filter(
-                            (evt) => !isApproversListIsEmpty(evt),
-                        )"
-                        :key="event.id"
-                        class="flex items-center justify-between p-2 rounded"
-                    >
-                        <CalendarEvent @eventClicked="eventClicked" :event="event" />
-
-                        <div class="flex space-x-2 text-4xl" v-if="isApprovedByCurrentUser(event)">
-                            Approved <i class="fa-solid fa-circle-check"></i>
-                        </div>
-                        <div
-                            class="flex space-x-2 text-4xl"
-                            v-else-if="isDeclinedByAll(event)"
-                        ></div>
-                        <div
-                            class="flex space-x-2 text-4xl"
-                            v-else-if="isDeclinedByCurrentUser(event)"
+                <div class="max-h-80 overflow-y-auto overflow-x-hidden">
+                    <ul class="pl-5 text-gray-800 list-disc list-inside">
+                        <li
+                            v-for="event in action.calendar_events.filter(
+                                (evt) => !isApproversListIsEmpty(evt),
+                            )"
+                            :key="event.id"
+                            class="flex items-center justify-between p-2 rounded"
                         >
-                            Declined <i class="fa-solid fa-circle-check"></i>
-                        </div>
-                        <div class="flex space-x-2" v-else>
-                            <button
-                                @click="acceptEvent(event)"
-                                class="px-2 py-1 text-green-500 transition duration-200 ease-in-out bg-transparent rounded-md hover:bg-green-100 hover:text-yellow-700"
+                            <CalendarEvent @eventClicked="eventClicked" :event="event" />
+
+                            <div class="flex space-x-2 text-4xl" v-if="isApprovedByCurrentUser(event)">
+                                Approved <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <div
+                                class="flex space-x-2 text-4xl"
+                                v-else-if="isDeclinedByAll(event)"
+                            ></div>
+                            <div
+                                class="flex space-x-2 text-4xl"
+                                v-else-if="isDeclinedByCurrentUser(event)"
                             >
-                                ✔
-                            </button>
-                            <button
-                                @click="rejectEvent(event)"
-                                class="px-2 py-1 text-red-500 transition duration-200 ease-in-out bg-transparent rounded-md hover:bg-red-100 hover:text-yellow-700"
-                            >
-                                ✖
-                            </button>
-                        </div>
-                    </li>
-                </ul>
+                                Declined <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <div class="flex space-x-2" v-else>
+                                <button
+                                    @click="acceptEvent(event)"
+                                    class="px-2 py-1 text-green-500 transition duration-200 ease-in-out bg-transparent rounded-md hover:bg-green-100 hover:text-yellow-700"
+                                >
+                                    ✔
+                                </button>
+                                <button
+                                    @click="rejectEvent(event)"
+                                    class="px-2 py-1 text-red-500 transition duration-200 ease-in-out bg-transparent rounded-md hover:bg-red-100 hover:text-yellow-700"
+                                >
+                                    ✖
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
                 <hr class="mb-4" />
                 <NewCalendarEventForm :action="action" />
             </div>
