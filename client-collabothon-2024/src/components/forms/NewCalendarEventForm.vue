@@ -20,13 +20,16 @@ export default {
     },
   },
   methods: {
-    createNewDate: (actionUuid) => {
+    updateContent(event) {
+      this.location = event.target.value;
+    },
+    createNewDate(actionUuid) {
       //console.log("Creating a new date". this.$refs.from_date, this.$refs.to_date);
       console.log("Creating a new date", document.getElementById('calendar_event_start_date').value);
       axios.post(`/calendar-event-create/${actionUuid}`, {
         start_date: toIsoFormat(document.getElementById('calendar_event_start_date').value.replace('T', ' ')) || '',
         end_date: toIsoFormat(document.getElementById('calendar_event_end_date').value.replace('T', ' ')) || '',
-        location: document.getElementById('calendar_event_location').value || "ONLINE"
+        location: this.location || "ONLINE"
       })
           .then((response) => {
             console.debug('[Calendar event] New date created', response);
@@ -36,11 +39,14 @@ export default {
           .catch((error) => {
             console.error("Error accepting the event:", error);
           });
+    },
+    onCheckOnline(event) {
+      this.location = event.target.checked ? 'ONLINE' : '';
     }
   },
   data() {
     return {
-      location: null,
+      location: 'ONLINE',
     };
   }
 }
@@ -54,7 +60,12 @@ export default {
       </label>
     </div>
     <div class="md:w-2/3">
-      <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" ref="location" id="calendar_event_location" type="text" placeholder="Enter meeting location">
+      <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
+        <input @change="onCheckOnline($event)" checked id="bordered-checkbox-2" type="checkbox" value="" name="bordered-checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+        <label for="bordered-checkbox-2" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Online</label>
+      </div>
+      or
+      <input @input="updateContent($event)" :class="`bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ${this.location ? 'disabled:opacity-50' : ''}`" ref="location" id="calendar_event_location" type="text" placeholder="Enter meeting location" :disabled="location === 'ONLINE'">
     </div>
   </div>
   <div class="flex flex-wrap -mx-3 mb-2">
