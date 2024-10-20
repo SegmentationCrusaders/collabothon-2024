@@ -196,12 +196,6 @@ export default {
 
                     this.emitNeedToReloadUrgentCalendarAction();
 
-
-
-                    console.log("Event Accepted", event)
-
-                    this.copiedCalendarEvents.filter((evt) => evt.uuid !== event.uuid);
-
                     swal({
                         title: "Event Accepted!",
                         text: "The event has been successfully accepted.",
