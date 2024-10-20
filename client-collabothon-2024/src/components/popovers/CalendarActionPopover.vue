@@ -3,7 +3,10 @@
         class="fixed inset-0 z-20 flex items-center justify-center bg-gray-800 bg-opacity-75"
         @click="closePopoverOnOutsideClick"
     >
-        <div class="relative flex w-3/4 p-4 bg-white rounded-lg shadow-lg commerzbank-border" @click.stop>
+        <div
+            class="relative flex w-3/4 p-4 bg-white rounded-lg shadow-lg commerzbank-border"
+            @click.stop
+        >
             <!-- Close button (X) -->
             <button
                 @click="closePopover"
@@ -15,29 +18,35 @@
             <!-- Left side: CalendarAction Info -->
             <div class="w-2/3 p-4 border-r border-gray-300">
                 <h3 class="my-2 text-xl font-bold">Title: {{ action?.title }}</h3>
-                <span 
+                <span
                     v-for="tag in action.tags"
                     :key="tag"
-                    class="px-4 mx-1 py-1 text-white rounded-full"
+                    class="px-4 py-1 mx-1 text-white rounded-full"
                     :style="{ backgroundColor: '#002d64' }"
                 >
                     {{ tag.tag }}
                 </span>
 
                 <CalendarActionStatus class="mt-1" :action="action" />
-                
+
                 <p class="my-2 text-gray-600">Description: {{ action?.description }}</p>
 
                 <div v-if="selectedEvent">
                     <div class="mb-4">
                         <p class="mb-2 text-gray-600">Client Employees:</p>
                         <div class="p-2">
-                            <div v-for="(employee, index) in selectedEvent.client_employees" :key="index" class="card mb-2 p-2 border border-gray-300 rounded">
-                                <div class="font-bold">{{ employee.first_name }} {{ employee.last_name }}</div>
+                            <div
+                                v-for="(employee, index) in selectedEvent.client_employees"
+                                :key="index"
+                                class="p-2 mb-2 border border-gray-300 rounded card"
+                            >
+                                <div class="font-bold">
+                                    {{ employee.first_name }} {{ employee.last_name }}
+                                </div>
                                 <div>{{ employee.email }}</div>
                                 <div>{{ employee.phone }}</div>
                                 <div>
-                                    Status: 
+                                    Status:
                                     <span v-if="employee.accepted === 1">✔ Accepted</span>
                                     <span v-else-if="employee.accepted === 0">✖ Not Accepted</span>
                                     <span v-else>? No Decision Yet</span>
@@ -49,12 +58,18 @@
                     <div class="mb-4">
                         <p class="mb-2 text-gray-600">Bank Employees:</p>
                         <div class="p-2">
-                            <div v-for="(employee, index) in selectedEvent.bank_employees" :key="index" class="card mb-2 p-2 border border-gray-300 rounded">
-                                <div class="font-bold">{{ employee.first_name }} {{ employee.last_name }}</div>
+                            <div
+                                v-for="(employee, index) in selectedEvent.bank_employees"
+                                :key="index"
+                                class="p-2 mb-2 border border-gray-300 rounded card"
+                            >
+                                <div class="font-bold">
+                                    {{ employee.first_name }} {{ employee.last_name }}
+                                </div>
                                 <div>{{ employee.email }}</div>
                                 <div>{{ employee.phone }}</div>
                                 <div>
-                                    Status: 
+                                    Status:
                                     <span v-if="employee.accepted === 1">✔ Accepted</span>
                                     <span v-else-if="employee.accepted === 0">✖ Not Accepted</span>
                                     <span v-else>? No Decision Yet</span>
@@ -73,19 +88,27 @@
                 <h3 class="mb-2 text-lg font-bold">Proposed Date</h3>
                 <ul class="pl-5 text-gray-800 list-disc list-inside">
                     <li
-                        v-for="event in action.calendar_events.filter(evt => !isApproversListIsEmpty(evt))"
+                        v-for="event in action.calendar_events.filter(
+                            (evt) => !isApproversListIsEmpty(evt),
+                        )"
                         :key="event.id"
                         class="flex items-center justify-between p-2 rounded"
                     >
                         <CalendarEvent @eventClicked="eventClicked" :event="event" />
 
-                      <div class="flex space-x-2 text-4xl" v-if="isApprovedByCurrentUser(event)">
-                        Approved <i class="fa-solid fa-circle-check"></i>
-                      </div>
-                      <div class="flex space-x-2 text-4xl" v-else-if="isDeclinedByAll(event)"></div>
-                      <div class="flex space-x-2 text-4xl" v-else-if="isDeclinedByCurrentUser(event)">
-                        Declined <i class="fa-solid fa-circle-check"></i>
-                      </div>
+                        <div class="flex space-x-2 text-4xl" v-if="isApprovedByCurrentUser(event)">
+                            Approved <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div
+                            class="flex space-x-2 text-4xl"
+                            v-else-if="isDeclinedByAll(event)"
+                        ></div>
+                        <div
+                            class="flex space-x-2 text-4xl"
+                            v-else-if="isDeclinedByCurrentUser(event)"
+                        >
+                            Declined <i class="fa-solid fa-circle-check"></i>
+                        </div>
                         <div class="flex space-x-2" v-else>
                             <button
                                 @click="acceptEvent(event)"
@@ -102,8 +125,8 @@
                         </div>
                     </li>
                 </ul>
-              <hr class="mb-4"/>
-              <NewCalendarEventForm :action="action"/>
+                <hr class="mb-4" />
+                <NewCalendarEventForm :action="action" />
             </div>
         </div>
     </div>
@@ -112,34 +135,34 @@
 <script>
 import CalendarActionStatus from "../CalendarActionStatus.vue";
 import CalendarEvent from "../CalendarEventComponent.vue";
-import {all} from "axios";
+import { all } from "axios";
 import NewCalendarEventForm from "../forms/NewCalendarEventForm.vue";
 
 const isApprovedByCurrentUser = (event) => {
-  const allApprovals = [...event.bank_employees, ...event.client_employees];
+    const allApprovals = [...event.bank_employees, ...event.client_employees];
 
-  console.log('approvals', allApprovals);
+    console.log("approvals", allApprovals);
 
-  return allApprovals.some((person) => person.accepted === 1).length > 1;
+    return allApprovals.some((person) => person.accepted === 1).length > 1;
 };
 
 const isDeclinedByCurrentUser = (event) => {
-  const allApprovals = [...event.bank_employees, ...event.client_employees];
+    const allApprovals = [...event.bank_employees, ...event.client_employees];
 
-  return allApprovals.some((person) => person.accepted === 1).length > 1;
+    return allApprovals.some((person) => person.accepted === 1).length > 1;
 };
 
 const isDeclinedByAll = (event) => {
-  const allApprovals = [...event.bank_employees, ...event.client_employees];
+    const allApprovals = [...event.bank_employees, ...event.client_employees];
 
-  return allApprovals.some((person) => person.accepted === 1).length === allApprovals.length;
+    return allApprovals.some((person) => person.accepted === 1).length === allApprovals.length;
 };
 
 const isApproversListIsEmpty = (event) => {
-  const allApprovals = [...event.bank_employees, ...event.client_employees];
+    const allApprovals = [...event.bank_employees, ...event.client_employees];
 
-  return allApprovals.length === 0;
-}
+    return allApprovals.length === 0;
+};
 
 export default {
     props: {
@@ -160,30 +183,49 @@ export default {
     },
     methods: {
         acceptEvent(event) {
-            axios.post(`/calendar-event-accept/${event.uuid}`)
-              .then((response) => {
-                 console.debug('[Calendar event] Accepted event with id', response);
-                 alert('Event accepted');
-                 location.reload();
-                // TODO: Reload component
-              })
-              .catch((error) => {
-                console.error("Error accepting the event:", error);
-              });
+            axios
+                .post(`/calendar-event-accept/${event.uuid}`)
+                .then((response) => {
+                    console.debug("[Calendar event] Accepted event with id", response);
+
+                    swal({
+                        title: "Event Accepted!",
+                        text: "The event has been successfully accepted.",
+                        icon: "success",
+                        confirmButtonText: "OK",
+                        timer: 2000,
+                        timerProgressBar: true,
+                    }).then(() => {
+                        location.reload();
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error accepting the event:", error);
+                });
             console.log(`Accepted meeting date: ${event.date}`, event);
             this.$emit("eventAccepted", event);
         },
         rejectEvent(event) {
-          axios.post(`/calendar-event-decline/${event.uuid}`)
-              .then((response) => {
-                  console.debug('[Calendar event] Declined event with id', response);
-                  alert('Event declined');
-                  location.reload();
-                  // TODO: Reload component
-              })
-              .catch((error) => {
-                console.error("Error accepting the event:", error);
-              });
+            axios
+                .post(`/calendar-event-decline/${event.uuid}`)
+                .then((response) => {
+                    console.debug("[Calendar event] Declined event with id", response);
+
+                    swal({
+                        title: "Event declined!",
+                        text: "The event has been declined.",
+                        icon: "success",
+                        confirmButtonText: "OK",
+                        timer: 2000,
+                        timerProgressBar: true,
+                    }).then(() => {
+                        location.reload();
+                    });
+                    
+                })
+                .catch((error) => {
+                    console.error("Error accepting the event:", error);
+                });
             console.log(`Rejected meeting date: ${event.date}`);
             this.$emit("eventRejected", event);
         },
@@ -201,7 +243,7 @@ export default {
         isApprovedByCurrentUser,
         isDeclinedByCurrentUser,
         isDeclinedByAll,
-        isApproversListIsEmpty
+        isApproversListIsEmpty,
     },
 };
 </script>

@@ -30,8 +30,18 @@ export default {
       })
           .then((response) => {
             console.debug('[Calendar event] New date created', response);
-            alert('New event created');
-            location.reload();
+
+            swal({
+                title: "New Event Created!",
+                text: "The event has been successfully created.",
+                icon: "success",
+                confirmButtonText: "OK",
+                timer: 2000,
+                timerProgressBar: true,
+            }).then(() => {
+                location.reload();
+            });
+
           })
           .catch((error) => {
             console.error("Error accepting the event:", error);
@@ -47,28 +57,28 @@ export default {
 </script>
 
 <template>
-  <div class="md:flex md:items-center mb-2">
+  <div class="mb-2 md:flex md:items-center">
     <div class="md:w-1/3">
-      <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+      <label class="block pr-4 mb-1 font-bold text-gray-500 md:text-right md:mb-0">
         Location:
       </label>
     </div>
     <div class="md:w-2/3">
-      <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" ref="location" id="calendar_event_location" type="text" placeholder="Enter meeting location">
+      <input class="w-full px-4 py-2 leading-tight text-gray-700 bg-gray-200 border-2 border-gray-200 rounded appearance-none focus:outline-none focus:bg-white focus:border-purple-500" ref="location" id="calendar_event_location" type="text" placeholder="Enter meeting location">
     </div>
   </div>
-  <div class="flex flex-wrap -mx-3 mb-2">
-    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-      <label class="block tracking-wide text-gray-700 text-xs font-bold mb-2">
+  <div class="flex flex-wrap mb-2 -mx-3">
+    <div class="w-full px-3 mb-6 md:w-1/2 md:mb-0">
+      <label class="block mb-2 text-xs font-bold tracking-wide text-gray-700">
         From:
       </label>
-      <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" ref="from_date" id="calendar_event_start_date" type="datetime-local" placeholder="From date">
+      <input class="w-full px-4 py-2 leading-tight text-gray-700 bg-gray-200 border-2 border-gray-200 rounded appearance-none focus:outline-none focus:bg-white focus:border-purple-500" ref="from_date" id="calendar_event_start_date" type="datetime-local" placeholder="From date">
     </div>
-    <div class="w-full md:w-1/2 px-3">
-      <label class="block tracking-wide text-gray-700 text-xs font-bold mb-2">
+    <div class="w-full px-3 md:w-1/2">
+      <label class="block mb-2 text-xs font-bold tracking-wide text-gray-700">
         To:
       </label>
-      <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" ref="to_date" id="calendar_event_end_date" type="datetime-local" placeholder="To date">
+      <input class="w-full px-4 py-2 leading-tight text-gray-700 bg-gray-200 border-2 border-gray-200 rounded appearance-none focus:outline-none focus:bg-white focus:border-purple-500" ref="to_date" id="calendar_event_end_date" type="datetime-local" placeholder="To date">
     </div>
   </div>
   <button
